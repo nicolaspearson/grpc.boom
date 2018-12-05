@@ -8,3 +8,6 @@ tsconfig.json
 *.log
 !index.d.ts
 !src/index.js
+.editorconfig
+.prettierrc
+tslint.json

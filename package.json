@@ -1,7 +1,7 @@
 {
 	"name": "grpc-boom",
-	"version": "0.0.1",
-	"description": "An implementation of the awesome Boom library to help create gRPC-friendly error objects.",
+	"version": "0.0.3",
+	"description": "A gRPC implementation of the awesome Boom library to help create gRPC-friendly error objects",
 	"main": "src/index.js",
 	"scripts": {
 		"build": "npm run tslint && rm -rf ./dist && npm run build:ts",
@@ -14,7 +14,8 @@
 		"grpc",
 		"boom",
 		"error",
-		"errors"
+		"errors",
+		"typescript"
 	],
 	"repository": {
 		"type": "git",

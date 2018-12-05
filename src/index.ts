@@ -83,7 +83,7 @@ export default class GrpcBoom extends Error {
 		return error;
 	}
 
-	public static isBoom(err: GrpcBoom) {
+	public static isBoom(err: Error) {
 		return err instanceof GrpcBoom && !!err.isBoom;
 	}
 
