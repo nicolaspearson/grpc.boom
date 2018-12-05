@@ -83,8 +83,8 @@ export default class GrpcBoom extends Error {
 		return error;
 	}
 
-	public static isBoom(err: Error) {
-		return err instanceof GrpcBoom && !!err.isBoom;
+	public static isBoom(error: Error): boolean {
+		return error instanceof GrpcBoom && !!error.isBoom;
 	}
 
 	public static boomify(error: Error, options?: Options) {

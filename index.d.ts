@@ -44,6 +44,12 @@ declare namespace GrpcBoom {
 	}
 
 	/**
+	 * Identifies whether an error is a `GrpcBoom` object. Same as calling `instanceof GrpcBoom`.
+	 * @param error the error object.
+	 */
+	export function isBoom(error: Error): boolean;
+
+	/**
 	 * Decorates a grpc boom error with the boom properties
 	 * @param error the error object to wrap. If error is already a boom object, it defaults to overriding the object with the new status code and message.
 	 * @param options optional additional options
