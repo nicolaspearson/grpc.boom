@@ -39,6 +39,23 @@ Generates the following response payload:
     - [`new GrpcBoom(message, [options])`](#new-boommessage-options)
     - [`boomify(err, [options])`](#boomifyerr-options)
     - [`isBoom(err)`](#isboomerr)
+  - [Supported gRPC Errors](#supported-grpc-errors)
+    - [`GrpcBoom.cancelled([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unknown([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.invalidArgument([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.deadlineExceeded([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.notFound([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.alreadyExists([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.permissionDenied([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.resourceExhausted([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.failedPrecondition([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.aborted([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.outOfRange([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unimplemented([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.internal([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unavailable([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.dataLoss([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unauthenticated([message], [data])`](#grpcboomcancelledmessage-data)
 
 <!-- tocstop -->
 
