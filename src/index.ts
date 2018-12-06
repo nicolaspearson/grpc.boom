@@ -66,14 +66,19 @@ export default class GrpcBoom extends Error {
 		return error;
 	}
 
-	public static boomify(error: Error, options?: Options) {
-		let message: string = error.message;
+	public static boomify(error: any, options?: Options) {
+		let message: string = error && error.message ? error.message : 'Unknown';
 		if (options && options.message && !(options.message instanceof Error)) {
 			message = options.message;
 		}
-		let code: number = 13;
+		let code: number = error && error.code ? error.code : 13;
 		if (options && options.code) {
 			code = options.code;
+		}
+		if (error && error.isBoom) {
+			error.message = message;
+			error.code = code;
+			return error;
 		}
 		return new GrpcBoom(message, { code });
 	}

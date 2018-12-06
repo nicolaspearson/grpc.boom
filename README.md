@@ -91,7 +91,7 @@ Creates a new `GrpcBoom` object using the provided `message` and then calling
 
 Decorates an error with the `GrpcBoom` properties where:
 
-- `err` - the `Error` object to decorate.
+- `err` - the `Error | GrpcBoom` object to decorate.
 - `options` - optional object with the following optional settings: 
 	- `code` - the gRPC status code. Defaults to `13` if no status code is already set and `err` is not a `GrpcBoom` object. 
 	- `message` - error message string. If the error already has a message, the provided `message` is added as a prefix.

@@ -31,7 +31,7 @@ declare namespace GrpcBoom {
 	 * @param options optional additional options
 	 */
 	export function boomify(
-		error: Error,
+		error: any,
 		options?: { code?: number; message?: string }
 	): GrpcBoomError;
 
