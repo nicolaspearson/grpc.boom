@@ -44,7 +44,7 @@ export default class GrpcBoom extends Error {
 	public message: string;
 
 	public static [Symbol.hasInstance](instance: GrpcBoom) {
-		return GrpcBoom.isBoom(instance);
+		return instance && instance.isBoom;
 	}
 
 	constructor(message: string, options?: Options) {
@@ -60,40 +60,22 @@ export default class GrpcBoom extends Error {
 		error.message = message;
 		error.reformat = this.reformat;
 		error.initialize = this.initialize;
-		error.serverError = this.serverError;
 
 		// Filter the stack to our external API
 		Error.captureStackTrace(error, ctor);
 		return error;
 	}
 
-	public static isBoom(error: Error | GrpcBoom): boolean {
-		if (error && error instanceof GrpcBoom && error.isBoom) {
-			return true;
-		}
-
-		try {
-			return error instanceof GrpcBoom;
-		} catch (err) {
-			return false;
-		}
-	}
-
 	public static boomify(error: Error, options?: Options) {
-		return GrpcBoom.boomifyClone(this.clone(error), options);
-	}
-
-	private static boomifyClone(err: GrpcBoom, options?: Options) {
-		options = options || {};
-		let message = err.message;
-		if (!message && options && options.message && !(options.message instanceof Error)) {
+		let message: string = error.message;
+		if (options && options.message && !(options.message instanceof Error)) {
 			message = options.message;
 		}
-		if (!message && err.message) {
-			message = err.message;
+		let code: number = 13;
+		if (options && options.code) {
+			code = options.code;
 		}
-		const grpcBoom: GrpcBoom = new GrpcBoom(message || 'Unknown');
-		return grpcBoom.initialize(err, options.code || err.code || 13, grpcBoom.message);
+		return new GrpcBoom(message, { code });
 	}
 
 	/**
@@ -321,93 +303,6 @@ export default class GrpcBoom extends Error {
 		if (this.code === 13 && debug !== true) {
 			this.message = 'An internal server error occurred'; // Hide actual error from user
 		}
-	}
-
-	public serverError(
-		message: string,
-		metadata: Metadata,
-		code: number,
-		ctor: (message: string, metadata?: Metadata) => any
-	) {
-		if (metadata instanceof GrpcBoom && !metadata.isBoom) {
-			return GrpcBoom.boomifyClone(metadata, { code, message });
-		}
-
-		return new GrpcBoom(message, { code, metadata, ctor });
-	}
-
-	private static clone(obj: any, options = {}, hasSeen?: any) {
-		if (typeof obj !== 'object' || obj === null) {
-			return obj;
-		}
-
-		const seen = hasSeen ? hasSeen : new Map();
-		const lookup = seen.get(obj);
-		if (lookup) {
-			return lookup;
-		}
-
-		let newObj;
-		let cloneDeep = false;
-		const isArray = Array.isArray(obj);
-
-		if (!isArray) {
-			if (Buffer.isBuffer(obj)) {
-				newObj = Buffer.from(obj);
-			} else if (obj instanceof Date) {
-				newObj = new Date(obj.getTime());
-			} else if (obj instanceof RegExp) {
-				newObj = new RegExp(obj);
-			} else {
-				const proto = Object.getPrototypeOf(obj);
-				if (proto && proto.isImmutable) {
-					newObj = obj;
-				} else {
-					newObj = Object.create(proto);
-					cloneDeep = true;
-				}
-			}
-		} else {
-			newObj = [];
-			cloneDeep = true;
-		}
-
-		seen.set(obj, newObj);
-
-		if (cloneDeep) {
-			const keys = this.keys(obj, options);
-			for (const key of keys) {
-				if (isArray && key === 'length') {
-					continue;
-				}
-
-				const descriptor = Object.getOwnPropertyDescriptor(obj, key);
-				if (descriptor && (descriptor.get || descriptor.set)) {
-					Object.defineProperty(newObj, key, descriptor);
-				} else {
-					Object.defineProperty(newObj, key, {
-						enumerable: descriptor ? descriptor.enumerable : true,
-						writable: true,
-						configurable: true,
-						value: this.clone(obj[key], options, seen)
-					});
-				}
-			}
-
-			if (isArray) {
-				newObj.length = obj.length;
-			}
-		}
-
-		if (obj && obj.message && newObj) {
-			newObj.message = obj.message;
-		}
-
-		return newObj;
-	}
-
-	private static keys(obj: any, options: { symbols?: any } = {}) {
-		return options.symbols ? Reflect.ownKeys(obj) : Object.getOwnPropertyNames(obj);
 	}
 }
 

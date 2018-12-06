@@ -38,7 +38,6 @@ Generates the following response payload:
   - [Helper Methods](#helper-methods)
     - [`new GrpcBoom(message, [options])`](#new-boommessage-options)
     - [`boomify(err, [options])`](#boomifyerr-options)
-    - [`isBoom(err)`](#isboomerr)
   - [Supported gRPC Errors](#supported-grpc-errors)
     - [`GrpcBoom.cancelled([message], [metadata])`](#grpcboomcancelledmessage-metadata)
 	- [`GrpcBoom.unknown([message], [metadata])`](#grpcboomunknownmessage-metadata)
@@ -63,8 +62,7 @@ Generates the following response payload:
 error response object which includes the following properties:
 
 - `isBoom` - if `true`, indicates this is a `GrpcBoom` object instance. Note that this boolean should
-  only be used if the error is an instance of `Error`. If it is not certain, use `GrpcBoom.isBoom()`
-  instead.
+  only be used if the error is an instance of `Error`.
 - `metadata` - additional error information.
 - `code` - the gRPC status code.
 - `details` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
@@ -105,10 +103,6 @@ Decorates an error with the `GrpcBoom` properties where:
 const error = new Error('Unexpected input');
 GrpcBoom.boomify(error, { code: 3 });
 ```
-
-### `isBoom(err)`
-
-Identifies whether an error is a `GrpcBoom` object. Same as calling `instanceof GrpcBoom`.
 
 ## Supported gRPC Errors
 
