@@ -83,8 +83,16 @@ export default class GrpcBoom extends Error {
 		return error;
 	}
 
-	public static isBoom(error: Error): boolean {
-		return error instanceof GrpcBoom && !!error.isBoom;
+	public static isBoom(error: any): boolean {
+		if (error && error.isBoom) {
+			return true;
+		}
+
+		try {
+			return error instanceof GrpcBoom;
+		} catch (err) {
+			return false;
+		}
 	}
 
 	public static boomify(error: Error, options?: Options) {
@@ -93,14 +101,14 @@ export default class GrpcBoom extends Error {
 
 	private static boomifyClone(err: GrpcBoom, options?: Options) {
 		options = options || {};
-		let message = err.message || 'Unknown';
+		let message = err.message;
 		if (!message && options && options.message && !(options.message instanceof Error)) {
 			message = options.message;
 		}
 		if (!message && err.output && err.output.payload && err.output.payload.message) {
 			message = err.output.payload.message;
 		}
-		const grpcBoomInstance: GrpcBoom = new GrpcBoom(message);
+		const grpcBoomInstance: GrpcBoom = new GrpcBoom(message || 'Unknown');
 
 		if (options.data !== undefined) {
 			err.data = options.data;
