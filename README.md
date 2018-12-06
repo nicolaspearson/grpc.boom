@@ -26,7 +26,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 3,
-	"details": "INVALID_ARGUMENT",
+	"error": "INVALID_ARGUMENT",
 	"message": "Length of 'Name' cannot be more than 10 characters"
 }
 ```
@@ -65,7 +65,7 @@ error response object which includes the following properties:
   only be used if the error is an instance of `Error`.
 - `metadata` - additional error information.
 - `code` - the gRPC status code.
-- `details` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
+- `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 - `message` - the error message.
 - `typeof` - the constructor used to create the error (e.g. `GrpcBoom.invalidArgument`).
 - inherited `Error` properties.
@@ -122,7 +122,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 1,
-	"details": "CANCELLED",
+	"error": "CANCELLED",
 	"message": "Operation was cancelled"
 }
 ```
@@ -143,7 +143,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 2,
-	"details": "UNKNOWN",
+	"error": "UNKNOWN",
 	"message": "Unknown error"
 }
 ```
@@ -164,7 +164,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 3,
-	"details": "INVALID_ARGUMENT",
+	"error": "INVALID_ARGUMENT",
 	"message": "Invalid query"
 }
 ```
@@ -185,7 +185,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 4,
-	"details": "DEADLINE_EXCEEDED",
+	"error": "DEADLINE_EXCEEDED",
 	"message": "Deadline expired before operation could complete"
 }
 ```
@@ -206,7 +206,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 5,
-	"details": "NOT_FOUND",
+	"error": "NOT_FOUND",
 	"message": "Requested entity was not found"
 }
 ```
@@ -227,7 +227,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 6,
-	"details": "ALREADY_EXISTS",
+	"error": "ALREADY_EXISTS",
 	"message": "Requested entity already exists"
 }
 ```
@@ -248,7 +248,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 7,
-	"details": "PERMISSION_DENIED",
+	"error": "PERMISSION_DENIED",
 	"message": "The caller does not have permission to execute the specified operation"
 }
 ```
@@ -269,7 +269,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 8,
-	"details": "RESOURCE_EXHAUSTED",
+	"error": "RESOURCE_EXHAUSTED",
 	"message": "Resource has been exhausted"
 }
 ```
@@ -292,7 +292,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 9,
-	"details": "FAILED_PRECONDITION",
+	"error": "FAILED_PRECONDITION",
 	"message": "Operation was rejected because the system is not in a state required for the operations execution"
 }
 ```
@@ -313,7 +313,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 10,
-	"details": "ABORTED",
+	"error": "ABORTED",
 	"message": "The operation was aborted"
 }
 ```
@@ -334,7 +334,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 11,
-	"details": "OUT_OF_RANGE",
+	"error": "OUT_OF_RANGE",
 	"message": "Operation was attempted past the valid range"
 }
 ```
@@ -355,7 +355,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 12,
-	"details": "UNIMPLEMENTED",
+	"error": "UNIMPLEMENTED",
 	"message": "Operation is not implemented or not supported/enabled"
 }
 ```
@@ -376,7 +376,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 13,
-	"details": "INTERNAL",
+	"error": "INTERNAL",
 	"message": "Internal errors"
 }
 ```
@@ -397,7 +397,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 14,
-	"details": "UNAVAILABLE",
+	"error": "UNAVAILABLE",
 	"message": "The service is currently unavailable"
 }
 ```
@@ -418,7 +418,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 15,
-	"details": "DATA_LOSS",
+	"error": "DATA_LOSS",
 	"message": "Unrecoverable data loss or corruption"
 }
 ```
@@ -441,7 +441,7 @@ Generates the following response payload:
 ```json
 {
 	"code": 16,
-	"details": "UNAUTHENTICATED",
+	"error": "UNAUTHENTICATED",
 	"message": "The request does not have valid authentication credentials for the operation"
 }
 ```
