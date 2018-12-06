@@ -1,75 +1,59 @@
 export = GrpcBoom;
 
 declare namespace GrpcBoom {
-	export interface GrpcBoomError<Data = any> extends Error {
+	export interface GrpcBoomError extends Error {
 		/** isBoom - if true, indicates this is a GrpcBoom object instance. */
 		isBoom: boolean;
-		/** output - the formatted response. Can be directly manipulated after object construction to return a custom error response. Allowed root keys: */
-		output: Output;
-		/** reformat() - rebuilds error.output using the other object properties. */
-		reformat: () => string;
 		/** additional error information. */
-		data: Data;
-	}
-
-	export interface Output {
+		metadata?: Metadata;
 		/** code - the gRPC status code. */
-		code: number;
-		/** payload - the formatted object used as the response payload (stringified). Can be directly manipulated but any changes will be lost if reformat() is called. Any content allowed and by default includes the following content: */
-		payload: Payload;
-	}
-
-	export interface Payload {
-		/** code - the gRPC status code, derived from error.output.code. */
 		code?: number;
 		/** error - the gRPC status message. */
 		error?: string;
-		/** message - the error message derived from error.message. */
-		message?: string;
+		/** message - the error message. */
+		message: string;
 	}
 
 	export interface Options {
-		/** code - the gRPC status code, derived from error.output.code. */
+		/** code - the gRPC status code. */
 		code?: number;
 		/** additional error information. */
-		data?: any;
+		metadata?: Metadata;
 		/** constructor reference. */
-		ctor?: (message: string, data: any) => any;
+		ctor?: (message: string, metadata: any) => any;
 		/** message - the error message derived from error.message. */
 		message?: string | Error;
-		/** if false, the err provided is a GrpcBoom object, and a code or message are provided, the values are ignored. Defaults to true (apply the provided code and message options to the error regardless of its type, Error or Boom object). */
-		override?: boolean;
 	}
 
 	/**
 	 * Identifies whether an error is a `GrpcBoom` object. Same as calling `instanceof GrpcBoom`.
 	 * @param error the error object.
 	 */
-	export function isBoom(error: Error): boolean;
+	export function isBoom(error: Error | GrpcBoomError): boolean;
 
 	/**
 	 * Decorates a grpc boom error with the boom properties
-	 * @param error the error object to wrap. If error is already a boom object, it defaults to overriding the object with the new status code and message.
+	 * @param error the error object to wrap.
 	 * @param options optional additional options
 	 */
 	export function boomify(
 		error: Error,
-		options?: { code?: number; message?: string; override?: boolean }
-	): GrpcBoomError<null>;
+		options?: { code?: number; message?: string }
+	): GrpcBoomError;
 
 	/**
 	 * Not an error; returned on success
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function ok<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function ok(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * The operation was cancelled (typically by the caller).
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function cancelled<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function cancelled(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Unknown error.  An example of where this error may be returned is
@@ -78,9 +62,9 @@ declare namespace GrpcBoom {
 	 * errors raised by APIs that do not return enough error information
 	 * may be converted to this error.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function unknown<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function unknown(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Client specified an invalid argument.  Note that this differs
@@ -88,9 +72,9 @@ declare namespace GrpcBoom {
 	 * that are problematic regardless of the state of the system
 	 * (e.g., a malformed file name).
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function invalidArgument<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function invalidArgument(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Deadline expired before operation could complete.  For operations
@@ -99,24 +83,24 @@ declare namespace GrpcBoom {
 	 * successful response from a server could have been delayed long
 	 * enough for the deadline to expire.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function deadlineExceeded<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function deadlineExceeded(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Some requested entity (e.g., file or directory) was not found.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function notFound<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function notFound(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Some entity that we attempted to create (e.g., file or directory)
 	 * already exists.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function alreadyExists<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function alreadyExists(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * The caller does not have permission to execute the specified
@@ -126,20 +110,17 @@ declare namespace GrpcBoom {
 	 * used if the caller can not be identified (use UNAUTHENTICATED
 	 * instead for those errors).
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function permissionDenied<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function permissionDenied(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Some resource has been exhausted, perhaps a per-user quota, or
 	 * perhaps the entire file system is out of space.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function resourceExhausted<Data = null>(
-		message?: string,
-		data?: Data
-	): GrpcBoomError<Data>;
+	export function resourceExhausted(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Operation was rejected because the system is not in a state
@@ -163,12 +144,9 @@ declare namespace GrpcBoom {
 	 *    server does not match the condition. E.g., conflicting
 	 *    read-modify-write on the same resource.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function failedPrecondition<Data = null>(
-		message?: string,
-		data?: Data
-	): GrpcBoomError<Data>;
+	export function failedPrecondition(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * The operation was aborted, typically due to a concurrency issue
@@ -177,9 +155,9 @@ declare namespace GrpcBoom {
 	 * See litmus test above for deciding between FAILED_PRECONDITION,
 	 * ABORTED, and UNAVAILABLE.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function aborted<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function aborted(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Operation was attempted past the valid range.  E.g., seeking or
@@ -198,25 +176,25 @@ declare namespace GrpcBoom {
 	 * a space can easily look for an OUT_OF_RANGE error to detect when
 	 * they are done.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function outOfRange<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function outOfRange(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Operation is not implemented or not supported/enabled in this service.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function unimplemented<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function unimplemented(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Internal errors. Means some invariants expected by underlying
 	 * system has been broken. If you see one of these errors,
 	 * something is very broken.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function internal<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function internal(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * The service is currently unavailable.  This is a most likely a
@@ -226,22 +204,73 @@ declare namespace GrpcBoom {
 	 * See litmus test above for deciding between FAILED_PRECONDITION,
 	 * ABORTED, and UNAVAILABLE.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function unavailable<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function unavailable(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * Unrecoverable data loss or corruption.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function dataLoss<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function dataLoss(message?: string, metadata?: Metadata): GrpcBoomError;
 
 	/**
 	 * The request does not have valid authentication credentials for the
 	 * operation.
 	 * @param message optional message.
-	 * @param data optional additional error data.
+	 * @param metadata optional additional error metadata.
 	 */
-	export function unauthenticated<Data = null>(message?: string, data?: Data): GrpcBoomError<Data>;
+	export function unauthenticated(message?: string, metadata?: Metadata): GrpcBoomError;
+
+	/**
+	 * A representation of the Metadata class in the grpc package
+	 */
+	export interface Metadata {
+		/**
+		 * Sets the given value for the given key by replacing any other values
+		 * associated with that key. Normalizes the key.
+		 * @param key The key to whose value should be set.
+		 * @param value The value to set. Must be a buffer if and only
+		 *   if the normalized key ends with '-bin'.
+		 */
+		set(key: string, value: MetadataValue): void;
+
+		/**
+		 * Adds the given value for the given key by appending to a list of previous
+		 * values associated with that key. Normalizes the key.
+		 * @param key The key for which a new value should be appended.
+		 * @param value The value to add. Must be a buffer if and only
+		 *   if the normalized key ends with '-bin'.
+		 */
+		add(key: string, value: MetadataValue): void;
+
+		/**
+		 * Removes the given key and any associated values. Normalizes the key.
+		 * @param key The key whose values should be removed.
+		 */
+		remove(key: string): void;
+
+		/**
+		 * Gets a list of all values associated with the key. Normalizes the key.
+		 * @param key The key whose value should be retrieved.
+		 * @return A list of values associated with the given key.
+		 */
+		get(key: string): MetadataValue[];
+
+		/**
+		 * Gets a plain object mapping each key to the first value associated with it.
+		 * This reflects the most common way that people will want to see metadata.
+		 * @return A key/value mapping of the metadata.
+		 */
+		getMap(): { [key: string]: MetadataValue };
+
+		/**
+		 * Clones the metadata object.
+		 * @return The newly cloned object.
+		 */
+		clone(): Metadata;
+	}
+
+	export type MetadataValue = string | Buffer;
 }
