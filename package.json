@@ -1,6 +1,6 @@
 {
 	"name": "grpc-boom",
-	"version": "0.0.4",
+	"version": "0.0.21",
 	"description": "A gRPC implementation of the awesome Boom library to help create gRPC-friendly error objects",
 	"main": "src/index.js",
 	"scripts": {

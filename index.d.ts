@@ -35,8 +35,6 @@ declare namespace GrpcBoom {
 		data?: any;
 		/** constructor reference. */
 		ctor?: (message: string, data: any) => any;
-		/** an option with extra properties to set on the error object. */
-		decorate?: any;
 		/** message - the error message derived from error.message. */
 		message?: string | Error;
 		/** if false, the err provided is a GrpcBoom object, and a code or message are provided, the values are ignored. Defaults to true (apply the provided code and message options to the error regardless of its type, Error or Boom object). */

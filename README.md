@@ -1,6 +1,6 @@
 # gRPC Boom
 
-A gRPC implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects.
+An implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects.
 
 ### Installation
 
@@ -40,7 +40,22 @@ Generates the following response payload:
     - [`boomify(err, [options])`](#boomifyerr-options)
     - [`isBoom(err)`](#isboomerr)
   - [Supported gRPC Errors](#supported-grpc-errors)
-    - [`GrpcBoom.cancelled([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.unknown([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.invalidArgument([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.deadlineExceeded([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.notFound([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.alreadyExists([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.permissionDenied([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.resourceExhausted([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.failedPrecondition([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.aborted([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.outOfRange([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.unimplemented([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.internal([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.unavailable([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.dataLoss([message], [data])`](#grpcboomcancelledmessage-data) - [`GrpcBoom.unauthenticated([message], [data])`](#grpcboomcancelledmessage-data)
+    - [`GrpcBoom.cancelled([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unknown([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.invalidArgument([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.deadlineExceeded([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.notFound([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.alreadyExists([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.permissionDenied([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.resourceExhausted([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.failedPrecondition([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.aborted([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.outOfRange([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unimplemented([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.internal([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unavailable([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.dataLoss([message], [data])`](#grpcboomcancelledmessage-data)
+	- [`GrpcBoom.unauthenticated([message], [data])`](#grpcboomcancelledmessage-data)
 
 <!-- tocstop -->
 
@@ -88,7 +103,6 @@ Creates a new `GrpcBoom` object using the provided `message` and then calling
   [`boomify()`](#boomifyerr-options) directly.
 - `options` - and optional object where: - `code` - the gRPC status code. Defaults to `13` if no status code is already set.
   - `data` - additional error information (assigned to `error.data`).
-  - `decorate` - an option with extra properties to set on the error object.
   - `ctor` - constructor reference used to crop the exception call stack output.
   - if `message` is an error object, also supports the other [`boomify()`](#boomifyerr-options)
     options.
@@ -98,9 +112,11 @@ Creates a new `GrpcBoom` object using the provided `message` and then calling
 Decorates an error with the `GrpcBoom` properties where:
 
 - `err` - the `Error` object to decorate.
-- `options` - optional object with the following optional settings: - `code` - the gRPC status code. Defaults to `13` if no status code is already set and `err` is not a `GrpcBoom` object. - `message` - error message string. If the error already has a message, the provided `message` is added as a prefix.
+- `options` - optional object with the following optional settings: 
+- `code` - the gRPC status code. Defaults to `13` if no status code is already set and `err` is not a `GrpcBoom` object. 
+- `message` - error message string. If the error already has a message, the provided `message` is added as a prefix.
   Defaults to no message.
-  - `decorate` - an option with extra properties to set on the error object. - `override` - if `false`, the `err` provided is a `GrpcBoom` object, and a `code` or `message` are provided,
+  - `override` - if `false`, the `err` provided is a `GrpcBoom` object, and a `code` or `message` are provided,
     the values are ignored. Defaults to `true` (apply the provided `code` and `message` options to the error
     regardless of its type, `Error` or `GrpcBoom` object).
 

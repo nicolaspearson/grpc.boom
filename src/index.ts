@@ -24,8 +24,6 @@ export interface Options {
 	data?: any;
 	/** constructor reference. */
 	ctor?: (message: string, data: any) => any;
-	/** an option with extra properties to set on the error object. */
-	decorate?: any;
 	/** message - the error message derived from error.message. */
 	message?: string | Error;
 	/** if false, the err provided is a Boom object, and a code or message are
@@ -35,51 +33,53 @@ export interface Options {
 	override?: boolean;
 }
 
+const codes: Map<number, string> = new Map([
+	[0, 'OK'],
+	[1, 'CANCELLED'],
+	[2, 'UNKNOWN'],
+	[3, 'INVALID_ARGUMENT'],
+	[4, 'DEADLINE_EXCEEDED'],
+	[5, 'NOT_FOUND'],
+	[6, 'ALREADY_EXISTS'],
+	[7, 'PERMISSION_DENIED'],
+	[8, 'RESOURCE_EXHAUSTED'],
+	[9, 'FAILED_PRECONDITION'],
+	[10, 'ABORTED'],
+	[11, 'OUT_OF_RANGE'],
+	[12, 'UNIMPLEMENTED'],
+	[13, 'INTERNAL'],
+	[14, 'UNAVAILABLE'],
+	[15, 'DATA_LOSS'],
+	[16, 'UNAUTHENTICATED']
+]);
+
 export default class GrpcBoom extends Error {
 	public isBoom: boolean;
 
 	public data: any;
 
 	public output: Output;
-
-	public codes: Map<number, string> = new Map([
-		[0, 'OK'],
-		[1, 'CANCELLED'],
-		[2, 'UNKNOWN'],
-		[3, 'INVALID_ARGUMENT'],
-		[4, 'DEADLINE_EXCEEDED'],
-		[5, 'NOT_FOUND'],
-		[6, 'ALREADY_EXISTS'],
-		[7, 'PERMISSION_DENIED'],
-		[8, 'RESOURCE_EXHAUSTED'],
-		[9, 'FAILED_PRECONDITION'],
-		[10, 'ABORTED'],
-		[11, 'OUT_OF_RANGE'],
-		[12, 'UNIMPLEMENTED'],
-		[13, 'INTERNAL'],
-		[14, 'UNAVAILABLE'],
-		[15, 'DATA_LOSS'],
-		[16, 'UNAUTHENTICATED']
-	]);
-
 	public static [Symbol.hasInstance](instance: GrpcBoom) {
 		return GrpcBoom.isBoom(instance);
 	}
 
 	constructor(message: string, options?: Options) {
 		super(message);
-		const { code = 13, data = null, ctor = GrpcBoom } = options ? options : {};
+
+		// Parse the options
+		const { code, data, ctor } = options ? options : { code: 13, data: null, ctor: GrpcBoom };
 		const error: any = new Error(message ? message : undefined);
+
+		// Set the defaults
+		error.isBoom = true;
+		error.output = { code, payload: {} };
+		error.data = data;
+		error.reformat = this.reformat;
+		error.initialize = this.initialize;
+		error.serverError = this.serverError;
 
 		// Filter the stack to our external API
 		Error.captureStackTrace(error, ctor);
-
-		error.data = data;
-		this.initialize(error, code);
-		error.typeof = ctor;
-		if (options && options.decorate) {
-			Object.assign(error, options.decorate);
-		}
 		return error;
 	}
 
@@ -93,17 +93,25 @@ export default class GrpcBoom extends Error {
 
 	private static boomifyClone(err: GrpcBoom, options?: Options) {
 		options = options || {};
+		let message = err.message || 'Unknown';
+		if (!message && options && options.message && !(options.message instanceof Error)) {
+			message = options.message;
+		}
+		if (!message && err.output && err.output.payload && err.output.payload.message) {
+			message = err.output.payload.message;
+		}
+		const grpcBoomInstance: GrpcBoom = new GrpcBoom(message);
 
 		if (options.data !== undefined) {
 			err.data = options.data;
 		}
 
-		if (options.decorate) {
-			Object.assign(err, options.decorate);
-		}
-
 		if (!err.isBoom) {
-			return err.initialize(err, options.code || 13, options.message);
+			return grpcBoomInstance.initialize(
+				err,
+				options.code || 13,
+				options.message || err.message || err.output.payload.message
+			);
 		}
 
 		if (
@@ -113,14 +121,18 @@ export default class GrpcBoom extends Error {
 			return err;
 		}
 
-		return err.initialize(err, options.code || err.output.code, options.message);
+		return grpcBoomInstance.initialize(
+			err,
+			options.code || err.output.code,
+			options.message || err.message || err.output.payload.message
+		);
 	}
 
 	/**
 	 * Not an error; returned on success
 	 */
 	public static ok(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 0, data, ctor: GrpcBoom.ok });
+		return this.create(message, 0, data, this.ok);
 	}
 
 	/**
@@ -128,7 +140,7 @@ export default class GrpcBoom extends Error {
 	 */
 
 	public static cancelled(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 1, data, ctor: GrpcBoom.cancelled });
+		return this.create(message, 1, data, this.cancelled);
 	}
 
 	/**
@@ -140,7 +152,7 @@ export default class GrpcBoom extends Error {
 	 */
 
 	public static unknown(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 2, data, ctor: GrpcBoom.unknown });
+		return this.create(message, 2, data, this.unknown);
 	}
 
 	/**
@@ -151,7 +163,7 @@ export default class GrpcBoom extends Error {
 	 */
 
 	public static invalidArgument(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 3, data, ctor: GrpcBoom.invalidArgument });
+		return this.create(message, 3, data, this.invalidArgument);
 	}
 
 	/**
@@ -162,14 +174,14 @@ export default class GrpcBoom extends Error {
 	 * enough for the deadline to expire.
 	 */
 	public static deadlineExceeded(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 4, data, ctor: GrpcBoom.deadlineExceeded });
+		return this.create(message, 4, data, this.deadlineExceeded);
 	}
 
 	/**
 	 * Some requested entity (e.g., file or directory) was not found.
 	 */
 	public static notFound(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 5, data, ctor: GrpcBoom.notFound });
+		return this.create(message, 5, data, this.notFound);
 	}
 
 	/**
@@ -177,7 +189,7 @@ export default class GrpcBoom extends Error {
 	 * already exists.
 	 */
 	public static alreadyExists(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 6, data, ctor: GrpcBoom.alreadyExists });
+		return this.create(message, 6, data, this.alreadyExists);
 	}
 
 	/**
@@ -189,7 +201,7 @@ export default class GrpcBoom extends Error {
 	 * instead for those errors).
 	 */
 	public static permissionDenied(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 7, data, ctor: GrpcBoom.permissionDenied });
+		return this.create(message, 7, data, this.permissionDenied);
 	}
 
 	/**
@@ -197,7 +209,7 @@ export default class GrpcBoom extends Error {
 	 * perhaps the entire file system is out of space.
 	 */
 	public static resourceExhausted(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 8, data, ctor: GrpcBoom.resourceExhausted });
+		return this.create(message, 8, data, this.resourceExhausted);
 	}
 
 	/**
@@ -223,7 +235,7 @@ export default class GrpcBoom extends Error {
 	 *    read-modify-write on the same resource.
 	 */
 	public static failedPrecondition(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 9, data, ctor: GrpcBoom.failedPrecondition });
+		return this.create(message, 9, data, this.failedPrecondition);
 	}
 
 	/**
@@ -234,7 +246,7 @@ export default class GrpcBoom extends Error {
 	 * ABORTED, and UNAVAILABLE.
 	 */
 	public static aborted(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 10, data, ctor: GrpcBoom.aborted });
+		return this.create(message, 10, data, this.aborted);
 	}
 
 	/**
@@ -255,14 +267,14 @@ export default class GrpcBoom extends Error {
 	 * they are done.
 	 */
 	public static outOfRange(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 11, data, ctor: GrpcBoom.outOfRange });
+		return this.create(message, 11, data, this.outOfRange);
 	}
 
 	/**
 	 * Operation is not implemented or not supported/enabled in this service.
 	 */
 	public static unimplemented(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 12, data, ctor: GrpcBoom.unimplemented });
+		return this.create(message, 12, data, this.unimplemented);
 	}
 
 	/**
@@ -271,7 +283,7 @@ export default class GrpcBoom extends Error {
 	 * something is very broken.
 	 */
 	public static internal(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 13, data, ctor: GrpcBoom.internal });
+		return this.create(message, 13, data, this.internal);
 	}
 
 	/**
@@ -283,14 +295,14 @@ export default class GrpcBoom extends Error {
 	 * ABORTED, and UNAVAILABLE.
 	 */
 	public static unavailable(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 14, data, ctor: GrpcBoom.unavailable });
+		return this.create(message, 14, data, this.unavailable);
 	}
 
 	/**
 	 * Unrecoverable data loss or corruption.
 	 */
 	public static dataLoss(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 15, data, ctor: GrpcBoom.dataLoss });
+		return this.create(message, 15, data, this.dataLoss);
 	}
 
 	/**
@@ -298,40 +310,51 @@ export default class GrpcBoom extends Error {
 	 * operation.
 	 */
 	public static unauthenticated(message: string, data: any): GrpcBoom {
-		return new GrpcBoom(message, { code: 16, data, ctor: GrpcBoom.unauthenticated });
+		return this.create(message, 16, data, this.unauthenticated);
+	}
+
+	public static create(
+		message: string,
+		code: number,
+		data: any,
+		ctor?: (message: string, data: any) => any
+	): GrpcBoom {
+		const grpcBoom: GrpcBoom = new GrpcBoom(message, {
+			code,
+			data,
+			ctor
+		});
+		return grpcBoom.initialize(grpcBoom, code, message);
 	}
 
 	public initialize(err: GrpcBoom, code: number, message?: string | Error) {
-		err.isBoom = true;
+		this.isBoom = true;
 
 		if (!err.hasOwnProperty('data')) {
-			err.data = null;
+			this.data = null;
 		}
 
-		err.output = {
+		this.output = {
 			code,
 			payload: {}
 		};
 
-		err.reformat = this.reformat;
-
 		if (!message && !err.message) {
-			err.reformat();
-			message = err.output.payload.error;
+			this.reformat();
+			message = this.output.payload.error;
 		}
 
 		if (message) {
-			err.message = message + (err.message ? ': ' + err.message : '');
-			err.output.payload.message = err.message;
+			this.output.payload.message = this.message;
 		}
 
-		err.reformat();
-		return err;
+		this.reformat();
+		return this;
 	}
 
 	public reformat(debug?: boolean) {
 		this.output.payload.code = this.output.code;
-		this.output.payload.error = this.codes.get(this.output.code) || 'Unknown';
+		this.output.payload.error = codes.get(this.output.code) || 'Unknown';
 
 		if (this.output.code === 13 && debug !== true) {
 			this.output.payload.message = 'An internal server error occurred'; // Hide actual error from user
@@ -353,12 +376,12 @@ export default class GrpcBoom extends Error {
 		return new GrpcBoom(message, { code, data, ctor });
 	}
 
-	private static clone(obj: any, options = {}) {
+	private static clone(obj: any, options = {}, hasSeen?: any) {
 		if (typeof obj !== 'object' || obj === null) {
 			return obj;
 		}
 
-		const seen = new Map();
+		const seen = hasSeen ? hasSeen : new Map();
 		const lookup = seen.get(obj);
 		if (lookup) {
 			return lookup;
@@ -406,7 +429,7 @@ export default class GrpcBoom extends Error {
 						enumerable: descriptor ? descriptor.enumerable : true,
 						writable: true,
 						configurable: true,
-						value: exports.clone(obj[key], options, seen)
+						value: this.clone(obj[key], options, seen)
 					});
 				}
 			}
@@ -414,6 +437,10 @@ export default class GrpcBoom extends Error {
 			if (isArray) {
 				newObj.length = obj.length;
 			}
+		}
+
+		if (obj && obj.message && newObj) {
+			newObj.message = obj.message;
 		}
 
 		return newObj;
