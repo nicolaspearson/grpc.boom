@@ -8,89 +8,9 @@ An implementation of the awesome [Boom](https://github.com/hapijs/boom) library 
 npm install grpc-boom --save
 ```
 
-### Example
+### Usage
 
-See the examples in `src/example/index.ts`
-
-```typescript
-import { Metadata } from 'grpc';
-import GrpcBoom from 'grpc-boom';
-
-export default class Example {
-	public constructorExample() {
-		console.log('-------------------------');
-		console.log('Constructor Example:');
-		console.log('-------------------------');
-		const metadata: Metadata = new Metadata();
-		metadata.set('constructed', 'true');
-		const grpcBoom = new GrpcBoom('Constructor Example!', { code: 1, metadata });
-		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`message: ${grpcBoom.message}`);
-		console.log(`code: ${grpcBoom.code}`);
-		console.log(`error: ${grpcBoom.error}`);
-		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
-	}
-
-	public boomifyExample() {
-		console.log('-------------------------');
-		console.log('Boomify Example:');
-		console.log('-------------------------');
-		const metadata: Metadata = new Metadata();
-		metadata.set('boomified', 'true');
-		const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), { code: 2, metadata });
-		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`message: ${grpcBoom.message}`);
-		console.log(`code: ${grpcBoom.code}`);
-		console.log(`error: ${grpcBoom.error}`);
-		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
-	}
-
-	public convenienceExample() {
-		console.log('-------------------------');
-		console.log('Convenience Example:');
-		console.log('-------------------------');
-		const metadata: Metadata = new Metadata();
-		metadata.set('name', 'Cannot be more than 10 characters');
-		const grpcBoom = GrpcBoom.invalidArgument('Validation failed', metadata);
-		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`message: ${grpcBoom.message}`);
-		console.log(`code: ${grpcBoom.code}`);
-		console.log(`error: ${grpcBoom.error}`);
-		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
-	}
-}
-```
-
-Generates the following response payloads:
-
-```
-	-------------------------
-	Constructor Example:
-	-------------------------
-	isBoom: true
-	message: Constructor Example!
-	code: 1
-	error: CANCELLED
-	metadata: {"_internal_repr":{"constructed":["true"]}}
-	-------------------------
-	Boomify Example:
-	-------------------------
-	isBoom: true
-	message: Boomify Example!
-	code: 2
-	error: UNKNOWN
-	metadata: {"_internal_repr":{"boomified":["true"]}}
-	-------------------------
-	Convenience Example:
-	-------------------------
-	isBoom: true
-	message: Validation failed
-	code: 3
-	error: INVALID_ARGUMENT
-	metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
-```
-
-Below is an example of using it inside of a `grpc` callback:
+`gRPC` callback usage:
 
 ```typescript
 import GrpcBoom from 'grpc-boom';
@@ -137,6 +57,7 @@ Generates the following response payload:
 	- [`GrpcBoom.unavailable([message], [metadata])`](#grpcboomunavailablemessage-metadata)
 	- [`GrpcBoom.dataLoss([message], [metadata])`](#grpcboomdatalossmessage-metadata)
 	- [`GrpcBoom.unauthenticated([message], [metadata])`](#grpcboomunauthenticatedmessage-metadata)
+- [Examples](#examples)
 
 <!-- tocstop -->
 
@@ -528,4 +449,86 @@ Generates the following response payload:
 	"error": "UNAUTHENTICATED",
 	"message": "The request does not have valid authentication credentials for the operation"
 }
+```
+
+## Examples:
+
+See the examples in `src/example/index.ts`
+
+```typescript
+import { Metadata } from 'grpc';
+import GrpcBoom from 'grpc-boom';
+
+export default class Example {
+	public constructorExample() {
+		console.log('-------------------------');
+		console.log('Constructor Example:');
+		console.log('-------------------------');
+		const metadata: Metadata = new Metadata();
+		metadata.set('constructed', 'true');
+		const grpcBoom = new GrpcBoom('Constructor Example!', { code: 1, metadata });
+		console.log(`isBoom: ${grpcBoom.isBoom}`);
+		console.log(`message: ${grpcBoom.message}`);
+		console.log(`code: ${grpcBoom.code}`);
+		console.log(`error: ${grpcBoom.error}`);
+		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+	}
+
+	public boomifyExample() {
+		console.log('-------------------------');
+		console.log('Boomify Example:');
+		console.log('-------------------------');
+		const metadata: Metadata = new Metadata();
+		metadata.set('boomified', 'true');
+		const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), { code: 2, metadata });
+		console.log(`isBoom: ${grpcBoom.isBoom}`);
+		console.log(`message: ${grpcBoom.message}`);
+		console.log(`code: ${grpcBoom.code}`);
+		console.log(`error: ${grpcBoom.error}`);
+		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+	}
+
+	public convenienceExample() {
+		console.log('-------------------------');
+		console.log('Convenience Example:');
+		console.log('-------------------------');
+		const metadata: Metadata = new Metadata();
+		metadata.set('name', 'Cannot be more than 10 characters');
+		const grpcBoom = GrpcBoom.invalidArgument('Validation failed', metadata);
+		console.log(`isBoom: ${grpcBoom.isBoom}`);
+		console.log(`message: ${grpcBoom.message}`);
+		console.log(`code: ${grpcBoom.code}`);
+		console.log(`error: ${grpcBoom.error}`);
+		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+	}
+}
+```
+
+Generates the following response payloads:
+
+```
+-------------------------
+Constructor Example:
+-------------------------
+isBoom: true
+message: Constructor Example!
+code: 1
+error: CANCELLED
+metadata: {"_internal_repr":{"constructed":["true"]}}
+-------------------------
+Boomify Example:
+-------------------------
+isBoom: true
+message: Boomify Example!
+code: 2
+error: UNKNOWN
+metadata: {"_internal_repr":{"boomified":["true"]}}
+-------------------------
+Convenience Example:
+-------------------------
+isBoom: true
+message: Validation failed
+code: 3
+error: INVALID_ARGUMENT
+metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
 ```
