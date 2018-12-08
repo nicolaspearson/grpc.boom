@@ -1,12 +1,13 @@
 {
 	"name": "grpc-boom",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "A gRPC implementation of the awesome Boom library to help create gRPC-friendly error objects",
 	"main": "src/index.js",
 	"scripts": {
-		"build": "npm run tslint && rm -rf ./dist && npm run build:ts",
+		"build": "npm run tslint && rm -rf ./src/index.js && npm run build:ts",
 		"build:ts": "tsc --rootDir ./src/",
 		"prettier": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+		"example": "ts-node ./src/example/index.ts",
 		"tslint": "tslint --fix -c tslint.json -p tsconfig.json",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
@@ -25,10 +26,10 @@
 	"license": "BSD-3-Clause",
 	"devDependencies": {
 		"@types/node": "^10.12.12",
-		"prettier": "~1.15.2",
+		"prettier": "~1.15.3",
 		"ts-helpers": "~1.1.2",
 		"ts-node": "^7.0.1",
 		"tslint": "^5.11.0",
-		"typescript": "^3.2.1"
+		"typescript": "^3.2.2"
 	}
 }

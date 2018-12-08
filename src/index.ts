@@ -61,6 +61,12 @@ export default class GrpcBoom extends Error {
 		error.reformat = this.reformat;
 		error.initialize = this.initialize;
 
+		if (options && options.metadata) {
+			error.metadata = options.metadata;
+		}
+
+		error.reformat();
+
 		// Filter the stack to our external API
 		Error.captureStackTrace(error, ctor);
 		return error;
@@ -80,7 +86,14 @@ export default class GrpcBoom extends Error {
 			error.code = code;
 			return error;
 		}
-		return new GrpcBoom(message, { code });
+
+		const newOptions: Options = { code };
+
+		if (options && options.metadata) {
+			newOptions.metadata = options.metadata;
+		}
+
+		return new GrpcBoom(message, newOptions);
 	}
 
 	/**

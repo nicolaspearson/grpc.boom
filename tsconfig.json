@@ -25,5 +25,5 @@
 		"strictPropertyInitialization": false /* This flag performs checks to ensure that each instance property of a class gets initialized in the constructor body, or by a property initializer. */
 	},
 	"include": ["./src/**/*"],
-	"exclude": ["node_modules", "scripts", "test"]
+	"exclude": ["node_modules", "scripts", "test", "./src/example"]
 }

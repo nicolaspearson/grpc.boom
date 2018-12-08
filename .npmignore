@@ -1,4 +1,4 @@
-
+# Ignore
 *.ts
 *.map
 .vscode/
@@ -6,8 +6,11 @@ test/
 tsconfig.json
 *.tgz
 *.log
-!index.d.ts
-!src/index.js
 .editorconfig
 .prettierrc
 tslint.json
+src/example
+
+# Keep
+!index.d.ts
+!src/index.js
