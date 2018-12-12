@@ -1,5 +1,7 @@
 # gRPC Boom
 
+[![Current Version](https://img.shields.io/npm/v/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
+
 A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It supports gRPC `Metadata`, and can be `customised` as desired. See [Usage](#usage) examples below for more details.
 
 This library has **zero** external dependencies.
