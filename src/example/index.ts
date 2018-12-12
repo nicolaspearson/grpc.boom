@@ -1,4 +1,4 @@
-import GrpcBoom from '../index';
+import GrpcBoom, { Status } from '../index';
 import Metadata from './metadata';
 
 // tslint:disable no-console
@@ -9,7 +9,7 @@ export default class Example {
 		console.log('-------------------------');
 		const metadata: Metadata = new Metadata();
 		metadata.set('constructed', 'true');
-		const grpcBoom = new GrpcBoom('Constructor Example!', { code: 1, metadata });
+		const grpcBoom = new GrpcBoom('Constructor Example!', { code: Status.CANCELLED, metadata });
 		console.log(`isBoom: ${grpcBoom.isBoom}`);
 		console.log(`message: ${grpcBoom.message}`);
 		console.log(`code: ${grpcBoom.code}`);
@@ -23,7 +23,10 @@ export default class Example {
 		console.log('-------------------------');
 		const metadata: Metadata = new Metadata();
 		metadata.set('boomified', 'true');
-		const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), { code: 2, metadata });
+		const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), {
+			code: Status.UNKNOWN,
+			metadata
+		});
 		console.log(`isBoom: ${grpcBoom.isBoom}`);
 		console.log(`message: ${grpcBoom.message}`);
 		console.log(`code: ${grpcBoom.code}`);
@@ -44,9 +47,28 @@ export default class Example {
 		console.log(`error: ${grpcBoom.error}`);
 		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
 	}
+
+	public customExample() {
+		console.log('-------------------------');
+		console.log('Custom Example:');
+		console.log('-------------------------');
+		const metadata: Metadata = new Metadata();
+		metadata.set('customised', 'true');
+		const grpcBoom = GrpcBoom.boomify(new Error('Custom Example!'), {
+			code: 200,
+			metadata,
+			error: 'CUSTOM_EXAMPLE'
+		});
+		console.log(`isBoom: ${grpcBoom.isBoom}`);
+		console.log(`message: ${grpcBoom.message}`);
+		console.log(`code: ${grpcBoom.code}`);
+		console.log(`error: ${grpcBoom.error}`);
+		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+	}
 }
 
 const example = new Example();
 example.constructorExample();
 example.boomifyExample();
 example.convenienceExample();
+example.customExample();

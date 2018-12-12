@@ -1,20 +1,7 @@
-export { GrpcBoom, Options, Status };
-
-declare interface Options {
-	/** code - the gRPC status code. */
-	code?: number;
-	/** additional error information. */
-	metadata?: Metadata;
-	/** constructor reference. */
-	ctor?: (message: string, metadata: any) => any;
-	/** message - the error message derived from error.message. */
-	message?: string | Error;
-}
-
 /**
  * Enum of status codes that gRPC can return
  */
-declare enum Status {
+export enum Status {
 	/**
 	 * Not an error; returned on success
 	 */
@@ -24,24 +11,24 @@ declare enum Status {
 	 */
 	CANCELLED = 1,
 	/**
-	 * Unknown error.  An example of where this error may be returned is
+	 * Unknown error. An example of where this error may be returned is
 	 * if a status value received from another address space belongs to
-	 * an error-space that is not known in this address space.  Also
+	 * an error-space that is not known in this address space. Also
 	 * errors raised by APIs that do not return enough error information
 	 * may be converted to this error.
 	 */
 	UNKNOWN = 2,
 	/**
-	 * Client specified an invalid argument.  Note that this differs
-	 * from FAILED_PRECONDITION.  INVALID_ARGUMENT indicates arguments
+	 * Client specified an invalid argument. Note that this differs
+	 * from FAILED_PRECONDITION. INVALID_ARGUMENT indicates arguments
 	 * that are problematic regardless of the state of the system
 	 * (e.g., a malformed file name).
 	 */
 	INVALID_ARGUMENT = 3,
 	/**
-	 * Deadline expired before operation could complete.  For operations
+	 * Deadline expired before operation could complete. For operations
 	 * that change the state of the system, this error may be returned
-	 * even if the operation has completed successfully.  For example, a
+	 * even if the operation has completed successfully. For example, a
 	 * successful response from a server could have been delayed long
 	 * enough for the deadline to expire.
 	 */
@@ -57,9 +44,9 @@ declare enum Status {
 	ALREADY_EXISTS = 6,
 	/**
 	 * The caller does not have permission to execute the specified
-	 * operation.  PERMISSION_DENIED must not be used for rejections
+	 * operation. PERMISSION_DENIED must not be used for rejections
 	 * caused by exhausting some resource (use RESOURCE_EXHAUSTED
-	 * instead for those errors).  PERMISSION_DENIED must not be
+	 * instead for those errors). PERMISSION_DENIED must not be
 	 * used if the caller can not be identified (use UNAUTHENTICATED
 	 * instead for those errors).
 	 */
@@ -71,7 +58,7 @@ declare enum Status {
 	RESOURCE_EXHAUSTED = 8,
 	/**
 	 * Operation was rejected because the system is not in a state
-	 * required for the operation's execution.  For example, directory
+	 * required for the operation's execution. For example, directory
 	 * to be deleted may be non-empty, an rmdir operation is applied to
 	 * a non-directory, etc.
 	 *
@@ -82,7 +69,7 @@ declare enum Status {
 	 *  - Use ABORTED if the client should retry at a higher-level
 	 *    (e.g., restarting a read-modify-write sequence).
 	 *  - Use FAILED_PRECONDITION if the client should not retry until
-	 *    the system state has been explicitly fixed.  E.g., if an "rmdir"
+	 *    the system state has been explicitly fixed. E.g., if an "rmdir"
 	 *    fails because the directory is non-empty, FAILED_PRECONDITION
 	 *    should be returned since the client should not retry unless
 	 *    they have first fixed up the directory by deleting files from it.
@@ -101,7 +88,7 @@ declare enum Status {
 	 */
 	ABORTED = 10,
 	/**
-	 * Operation was attempted past the valid range.  E.g., seeking or
+	 * Operation was attempted past the valid range. E.g., seeking or
 	 * reading past end of file.
 	 *
 	 * Unlike INVALID_ARGUMENT, this error indicates a problem that may
@@ -112,7 +99,7 @@ declare enum Status {
 	 * file size.
 	 *
 	 * There is a fair bit of overlap between FAILED_PRECONDITION and
-	 * OUT_OF_RANGE.  We recommend using OUT_OF_RANGE (the more specific
+	 * OUT_OF_RANGE. We recommend using OUT_OF_RANGE (the more specific
 	 * error) when it applies so that callers who are iterating through
 	 * a space can easily look for an OUT_OF_RANGE error to detect when
 	 * they are done.
@@ -123,13 +110,13 @@ declare enum Status {
 	 */
 	UNIMPLEMENTED = 12,
 	/**
-	 * Internal errors.  Means some invariants expected by underlying
-	 * system has been broken.  If you see one of these errors,
+	 * Internal errors. Means some invariants expected by underlying
+	 * system has been broken. If you see one of these errors,
 	 * something is very broken.
 	 */
 	INTERNAL = 13,
 	/**
-	 * The service is currently unavailable.  This is a most likely a
+	 * The service is currently unavailable. This is a most likely a
 	 * transient condition and may be corrected by retrying with
 	 * a back off.
 	 *
@@ -148,38 +135,53 @@ declare enum Status {
 	UNAUTHENTICATED = 16
 }
 
-declare class GrpcBoom extends Error {
-	/** isBoom - if true, indicates this is a GrpcBoom object instance. */
-	isBoom: boolean;
-	/** additional error information. */
-	metadata?: Metadata;
+export interface Options {
 	/** code - the gRPC status code. */
 	code?: number;
+	/** additional error information. */
+	metadata?: Metadata;
+	/** constructor reference. */
+	ctor?: (message: string, metadata?: Metadata) => any;
 	/** error - the gRPC status message. */
 	error?: string;
 	/** message - the error message. */
-	message: string;
+	message?: string | Error;
+}
+
+export default class GrpcBoom extends Error {
+	/** isBoom - if true, indicates this is a GrpcBoom object instance. */
+	public isBoom: boolean;
+	/** additional error information. */
+	public metadata?: Metadata;
+	/** code - the gRPC status code. */
+	public code?: number;
+	/** error - the gRPC status message. */
+	public error?: string;
+	/** message - the error message. */
+	public message: string;
+
+	constructor(message: string, options?: Options);
 
 	/**
 	 * Decorates an error / grpc boom object with boom properties
 	 * @param error the error / grpc boom object to wrap.
 	 * @param options optional settings
 	 */
-	boomify(error: any, options?: { code?: number; message?: string }): GrpcBoom;
+	public static boomify(error: any, options?: Options): GrpcBoom;
 
 	/**
 	 * Not an error; returned on success
 	 * @param message the message.
 	 * @param metadata optional grpc metadata.
 	 */
-	ok(message: string, metadata?: Metadata): GrpcBoom;
+	public static ok(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * The operation was cancelled (typically by the caller).
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	cancelled(message: string, metadata?: Metadata): GrpcBoom;
+	public static cancelled(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Unknown error. An example of where this error may be returned is
@@ -190,7 +192,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	unknown(message: string, metadata?: Metadata): GrpcBoom;
+	public static unknown(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Client specified an invalid argument. Note that this differs
@@ -200,7 +202,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	invalidArgument(message: string, metadata?: Metadata): GrpcBoom;
+	public static invalidArgument(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Deadline expired before operation could complete. For operations
@@ -211,14 +213,14 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	deadlineExceeded(message: string, metadata?: Metadata): GrpcBoom;
+	public static deadlineExceeded(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Some requested entity (e.g., file or directory) was not found.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	notFound(message: string, metadata?: Metadata): GrpcBoom;
+	public static notFound(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Some entity that we attempted to create (e.g., file or directory)
@@ -226,7 +228,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	alreadyExists(message: string, metadata?: Metadata): GrpcBoom;
+	public static alreadyExists(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * The caller does not have permission to execute the specified
@@ -238,7 +240,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	permissionDenied(message: string, metadata?: Metadata): GrpcBoom;
+	public static permissionDenied(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Some resource has been exhausted, perhaps a per-user quota, or
@@ -246,7 +248,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	resourceExhausted(message: string, metadata?: Metadata): GrpcBoom;
+	public static resourceExhausted(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Operation was rejected because the system is not in a state
@@ -272,7 +274,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	failedPrecondition(message: string, metadata?: Metadata): GrpcBoom;
+	public static failedPrecondition(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * The operation was aborted, typically due to a concurrency issue
@@ -283,7 +285,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	aborted(message: string, metadata?: Metadata): GrpcBoom;
+	public static aborted(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Operation was attempted past the valid range. E.g., seeking or
@@ -304,14 +306,14 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	outOfRange(message: string, metadata?: Metadata): GrpcBoom;
+	public static outOfRange(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Operation is not implemented or not supported/enabled in this service.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	unimplemented(message: string, metadata?: Metadata): GrpcBoom;
+	public static unimplemented(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Internal errors. Means some invariants expected by underlying
@@ -320,7 +322,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	internal(message: string, metadata?: Metadata): GrpcBoom;
+	public static internal(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * The service is currently unavailable. This is a most likely a
@@ -332,14 +334,14 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	unavailable(message: string, metadata?: Metadata): GrpcBoom;
+	public static unavailable(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * Unrecoverable data loss or corruption.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	dataLoss(message: string, metadata?: Metadata): GrpcBoom;
+	public static dataLoss(message: string, metadata?: Metadata): GrpcBoom;
 
 	/**
 	 * The request does not have valid authentication credentials for the
@@ -347,7 +349,7 @@ declare class GrpcBoom extends Error {
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
 	 */
-	unauthenticated(message: string, metadata?: Metadata): GrpcBoom;
+	public static unauthenticated(message: string, metadata?: Metadata): GrpcBoom;
 }
 
 /**
@@ -359,7 +361,7 @@ interface Metadata {
 	 * associated with that key. Normalizes the key.
 	 * @param key The key to whose value should be set.
 	 * @param value The value to set. Must be a buffer if and only
-	 *   if the normalized key ends with '-bin'.
+	 *  if the normalized key ends with '-bin'.
 	 */
 	set(key: string, value: MetadataValue): void;
 

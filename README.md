@@ -1,6 +1,6 @@
 # gRPC Boom
 
-A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It also supports gRPC `Metadata`, see examples below for more details.
+A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It also supports gRPC `Metadata`, and is to open `customisation`, see examples below for more details.
 
 This library has **zero** external dependencies.
 
@@ -15,7 +15,7 @@ npm install grpc-boom --save
 `gRPC` callback usage:
 
 ```typescript
-import { GrpcBoom } from 'grpc-boom';
+import GrpcBoom from 'grpc-boom';
 
 function sayHelloStrict(call, callback) {
   if (call.request.getName().length > 10) {
@@ -43,7 +43,7 @@ Generates the following response payload if "Name" is more than 10 characters:
   - [Overview](#overview)
   - [Helper Methods](#helper-methods)
     - [`new GrpcBoom(message, [options])`](#new-boommessage-options)
-    - [`boomify(err, [options])`](#boomifyerr-options)
+    - [`boomify(error, [options])`](#boomifyerr-options)
   - [Convenience Methods](#convenience-methods)
     - [`GrpcBoom.cancelled([message], [metadata])`](#grpcboomcancelledmessage-metadata)
     - [`GrpcBoom.unknown([message], [metadata])`](#grpcboomunknownmessage-metadata)
@@ -76,6 +76,8 @@ error response object which includes the following properties:
 - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 - `message` - the error message.
 
+_Note: See the [Examples](#examples) section for `Metadata` and `customised` usage._
+
 ## Helper Methods
 
 The `GrpcBoom` object also supports the following helper methods:
@@ -86,18 +88,20 @@ Creates a new `GrpcBoom` object using the provided `message` and decorates the e
 
 - `message` - the error message.
 - `options` - and optional object where: 
-  - `code` - the gRPC status code. Defaults to `13` if no status code is set.
+  - `code` - the gRPC status code. Defaults to `2` if no status code is set.
   - `metadata` - an optional gRPC `Metadata` object.
+  - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 
-### `boomify(err, [options])`
+### `boomify(error, [options])`
 
 Decorates an error with `GrpcBoom` properties where:
 
-- `err` - the `Error / GrpcBoom` object to decorate.
+- `error` - the `Error / GrpcBoom` object to decorate.
 - `options` - optional object with the following settings: 
-  - `code` - the gRPC status code. Defaults to `13` if no status code is already set.
+  - `code` - the gRPC status code. Defaults to `2` if no status code is already set.
   - `message` - the error message string
   - `metadata` - an optional gRPC `Metadata` object.
+  - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 
 ```typescript
 const error = new Error('Unexpected input');
@@ -117,8 +121,6 @@ Generates the following response payload:
 ## Convenience Methods
 
 Below is a list of convenience methods that can be used to easily generate `gRPC` errors:
-
-_Note: See the [Examples](#examples) section for `Metadata` usage._
 
 ### `GrpcBoom.cancelled([message], [metadata])`
 
@@ -466,7 +468,7 @@ See the examples in `src/example/index.ts`
 
 ```typescript
 import { Metadata } from 'grpc';
-import { GrpcBoom } from 'grpc-boom';
+import GrpcBoom, { Status } from 'grpc-boom';
 
 export default class Example {
   public constructorExample() {
@@ -475,7 +477,7 @@ export default class Example {
     console.log('-------------------------');
     const metadata: Metadata = new Metadata();
     metadata.set('constructed', 'true');
-    const grpcBoom = new GrpcBoom('Constructor Example!', { code: 1, metadata });
+    const grpcBoom = new GrpcBoom('Constructor Example!', { code: Status.CANCELLED, metadata });
     console.log(`isBoom: ${grpcBoom.isBoom}`);
     console.log(`message: ${grpcBoom.message}`);
     console.log(`code: ${grpcBoom.code}`);
@@ -489,7 +491,10 @@ export default class Example {
     console.log('-------------------------');
     const metadata: Metadata = new Metadata();
     metadata.set('boomified', 'true');
-    const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), { code: 2, metadata });
+    const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), {
+      code: Status.UNKNOWN,
+      metadata
+    });
     console.log(`isBoom: ${grpcBoom.isBoom}`);
     console.log(`message: ${grpcBoom.message}`);
     console.log(`code: ${grpcBoom.code}`);
@@ -510,12 +515,31 @@ export default class Example {
     console.log(`error: ${grpcBoom.error}`);
     console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
   }
+
+  public customExample() {
+    console.log('-------------------------');
+    console.log('Custom Example:');
+    console.log('-------------------------');
+    const metadata: Metadata = new Metadata();
+    metadata.set('customised', 'true');
+    const grpcBoom = GrpcBoom.boomify(new Error('Custom Example!'), {
+      code: 200,
+      metadata,
+      error: 'CUSTOM_EXAMPLE'
+    });
+    console.log(`isBoom: ${grpcBoom.isBoom}`);
+    console.log(`message: ${grpcBoom.message}`);
+    console.log(`code: ${grpcBoom.code}`);
+    console.log(`error: ${grpcBoom.error}`);
+    console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+  }
 }
 
 const example = new Example();
 example.constructorExample();
 example.boomifyExample();
 example.convenienceExample();
+example.customExample();
 ```
 
 Generates the following response output:
@@ -545,6 +569,15 @@ Generates the following response output:
   code: 3
   error: INVALID_ARGUMENT
   metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
+  -------------------------
+  Custom Example:
+  -------------------------
+  isBoom: true
+  message: Custom Example!
+  code: 200
+  error: CUSTOM_EXAMPLE
+  metadata: {"_internal_repr":{"customised":["true"]}}
+  -------------------------
 ```
 
 ## Contribution Guidelines
