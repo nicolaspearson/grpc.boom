@@ -16,11 +16,11 @@ npm install grpc-boom --save
 
 - [Overview](#overview)
   - [Usage](#usage)
-    - [`gRPC callback usage`](#grpc-callback-usage)
-    - [`Constructor usage`](#constructor-usage)
-    - [`Boomify usage`](#boomify-usage)
-    - [`Convenience usage`](#convenience-usage)
-    - [`Custom usage`](#custom-usage)
+    - [`gRPC Callback`](#grpc-callback)
+    - [`Constructor`](#constructor)
+    - [`Boomify`](#boomify)
+    - [`Convenience`](#convenience)
+    - [`Custom`](#custom)
   - [Helper Methods](#helper-methods)
     - [`new GrpcBoom(message, [options])`](#new-grpcboommessage-options)
     - [`boomify(error, [options])`](#boomifyerror-options)
@@ -57,7 +57,9 @@ error response object which includes the following properties:
 
 ## Usage
 
-### gRPC callback usage:
+Below are some general usage examples:
+
+### gRPC Callback:
 
 ```typescript
 import GrpcBoom from 'grpc-boom';
@@ -80,25 +82,25 @@ Generates the following response payload if "Name" is more than 10 characters:
 }
 ```
 
-### Constructor usage:
+### Constructor:
+
+See [`new GrpcBoom(message, [options])`](#new-grpcboommessage-options) for details.
 
 ```typescript
 import { Metadata } from 'grpc';
-import GrpcBoom from 'grpc-boom';
+import GrpcBoom, { Status } from 'grpc-boom';
 
-function example() {
+function example(): GrpcBoom {
   const metadata: Metadata = new Metadata();
   metadata.set('constructed', 'true');
-  const grpcBoom = new GrpcBoom('Constructor Example!', { code: Status.CANCELLED, metadata });
-  console.log(`isBoom: ${grpcBoom.isBoom}`);
-  console.log(`message: ${grpcBoom.message}`);
-  console.log(`code: ${grpcBoom.code}`);
-  console.log(`error: ${grpcBoom.error}`);
-  console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+  return new GrpcBoom('Constructor Example!', { 
+    code: Status.CANCELLED,
+    metadata
+  });
 }
 ```
 
-Generates the following output:
+Returns a gRPC Boom object with the following properties:
 
 ```json
 isBoom: true
@@ -108,28 +110,25 @@ error: CANCELLED
 metadata: {"_internal_repr":{"constructed":["true"]}}
 ```
 
-### Boomify usage:
+### Boomify:
+
+See [`boomify(error, [options])`](#boomifyerror-options) for details.
 
 ```typescript
 import { Metadata } from 'grpc';
-import GrpcBoom from 'grpc-boom';
+import GrpcBoom, { Status } from 'grpc-boom';
 
-function example() {
+function example(): GrpcBoom {
   const metadata: Metadata = new Metadata();
   metadata.set('boomified', 'true');
-  const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), {
+  return GrpcBoom.boomify(new Error('Boomify Example!'), {
     code: Status.UNKNOWN,
     metadata
   });
-  console.log(`isBoom: ${grpcBoom.isBoom}`);
-  console.log(`message: ${grpcBoom.message}`);
-  console.log(`code: ${grpcBoom.code}`);
-  console.log(`error: ${grpcBoom.error}`);
-  console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
 }
 ```
 
-Generates the following output:
+Returns a gRPC Boom object with the following properties:
 
 ```json
 isBoom: true
@@ -139,25 +138,22 @@ error: UNKNOWN
 metadata: {"_internal_repr":{"boomified":["true"]}}
 ```
 
-### Convenience usage:
+### Convenience:
+
+See [Convenience Methods](#convenience-methods) for a list of available methods.
 
 ```typescript
 import { Metadata } from 'grpc';
 import GrpcBoom from 'grpc-boom';
 
-function example() {
+function example(): GrpcBoom {
   const metadata: Metadata = new Metadata();
   metadata.set('name', 'Cannot be more than 10 characters');
-  const grpcBoom = GrpcBoom.invalidArgument('Validation failed', metadata);
-  console.log(`isBoom: ${grpcBoom.isBoom}`);
-  console.log(`message: ${grpcBoom.message}`);
-  console.log(`code: ${grpcBoom.code}`);
-  console.log(`error: ${grpcBoom.error}`);
-  console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+  return GrpcBoom.invalidArgument('Validation failed', metadata);
 }
 ```
 
-Generates the following output:
+Returns a gRPC Boom object with the following properties:
 
 ```json
 isBoom: true
@@ -167,29 +163,26 @@ error: INVALID_ARGUMENT
 metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
 ```
 
-### Custom usage:
+### Custom:
+
+You can also customise the gRPC Boom object:
 
 ```typescript
 import { Metadata } from 'grpc';
 import GrpcBoom from 'grpc-boom';
 
-function example() {
+function example(): GrpcBoom {
   const metadata: Metadata = new Metadata();
   metadata.set('customised', 'true');
-  const grpcBoom = GrpcBoom.boomify(new Error('Custom Example!'), {
+  return GrpcBoom.boomify(new Error('Custom Example!'), {
     code: 200,
     metadata,
     error: 'CUSTOM_EXAMPLE'
   });
-  console.log(`isBoom: ${grpcBoom.isBoom}`);
-  console.log(`message: ${grpcBoom.message}`);
-  console.log(`code: ${grpcBoom.code}`);
-  console.log(`error: ${grpcBoom.error}`);
-  console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
 }
 ```
 
-Generates the following output:
+Returns a gRPC Boom object with the following properties:
 
 ```json
 isBoom: true
