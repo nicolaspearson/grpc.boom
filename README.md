@@ -59,7 +59,7 @@ error response object which includes the following properties:
 
 Below are some general usage examples:
 
-### gRPC Callback:
+### `gRPC Callback`
 
 ```typescript
 import GrpcBoom from 'grpc-boom';
@@ -82,7 +82,7 @@ Generates the following response payload if "Name" is more than 10 characters:
 }
 ```
 
-### Constructor:
+### `Constructor`
 
 See [`new GrpcBoom(message, [options])`](#new-grpcboommessage-options) for details.
 
@@ -110,7 +110,7 @@ error: CANCELLED
 metadata: {"_internal_repr":{"constructed":["true"]}}
 ```
 
-### Boomify:
+### `Boomify`
 
 See [`boomify(error, [options])`](#boomifyerror-options) for details.
 
@@ -138,7 +138,7 @@ error: UNKNOWN
 metadata: {"_internal_repr":{"boomified":["true"]}}
 ```
 
-### Convenience:
+### `Convenience`
 
 See [Convenience Methods](#convenience-methods) for a list of available methods.
 
@@ -163,7 +163,7 @@ error: INVALID_ARGUMENT
 metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
 ```
 
-### Custom:
+### `Custom`
 
 You can also customise the gRPC Boom object:
 
