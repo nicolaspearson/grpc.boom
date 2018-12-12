@@ -59,7 +59,7 @@ Generates the following response payload if "Name" is more than 10 characters:
 	- [`GrpcBoom.unavailable([message], [metadata])`](#grpcboomunavailablemessage-metadata)
 	- [`GrpcBoom.dataLoss([message], [metadata])`](#grpcboomdatalossmessage-metadata)
 	- [`GrpcBoom.unauthenticated([message], [metadata])`](#grpcboomunauthenticatedmessage-metadata)
-- [Examples](#examples)
+  - [Examples](#examples)
 
 <!-- tocstop -->
 
