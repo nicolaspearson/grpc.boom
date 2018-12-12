@@ -4,24 +4,24 @@ A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) li
 
 This library has **zero** external dependencies.
 
-### Installation
+## Installation
 
 ```
 npm install grpc-boom --save
 ```
 
-### Usage
+## Usage
 
 `gRPC` callback usage:
 
 ```typescript
-import GrpcBoom from 'grpc-boom';
+import { GrpcBoom } from 'grpc-boom';
 
 function sayHelloStrict(call, callback) {
-	if (call.request.getName().length > 10) {
-		return callback(GrpcBoom.invalidArgument('Length of "Name" cannot be more than 10 characters'), null);
-	}
-	callback(null, { Result: 'Hey, ' + call.request.getName() + '!' });
+  if (call.request.getName().length > 10) {
+    return callback(GrpcBoom.invalidArgument('Length of "Name" cannot be more than 10 characters'), null);
+  }
+  callback(null, { Result: 'Hey, ' + call.request.getName() + '!' });
 }
 ```
 
@@ -29,11 +29,13 @@ Generates the following response payload if "Name" is more than 10 characters:
 
 ```json
 {
-	"code": 3,
-	"error": "INVALID_ARGUMENT",
-	"message": "Length of 'Name' cannot be more than 10 characters"
+  "code": 3,
+  "error": "INVALID_ARGUMENT",
+  "message": "Length of 'Name' cannot be more than 10 characters"
 }
 ```
+
+## Table of Contents
 
 <!-- toc -->
 
@@ -44,21 +46,21 @@ Generates the following response payload if "Name" is more than 10 characters:
     - [`boomify(err, [options])`](#boomifyerr-options)
   - [Convenience Methods](#convenience-methods)
     - [`GrpcBoom.cancelled([message], [metadata])`](#grpcboomcancelledmessage-metadata)
-	- [`GrpcBoom.unknown([message], [metadata])`](#grpcboomunknownmessage-metadata)
-	- [`GrpcBoom.invalidArgument([message], [metadata])`](#grpcboominvalidargumentmessage-metadata)
-	- [`GrpcBoom.deadlineExceeded([message], [metadata])`](#grpcboomdeadlineexceededmessage-metadata)
-	- [`GrpcBoom.notFound([message], [metadata])`](#grpcboomnotfoundmessage-metadata)
-	- [`GrpcBoom.alreadyExists([message], [metadata])`](#grpcboomalreadyexistsmessage-metadata)
-	- [`GrpcBoom.permissionDenied([message], [metadata])`](#grpcboompermissiondeniedmessage-metadata)
-	- [`GrpcBoom.resourceExhausted([message], [metadata])`](#grpcboomresourceexhaustedmessage-metadata)
-	- [`GrpcBoom.failedPrecondition([message], [metadata])`](#grpcboomfailedpreconditionmessage-metadata)
-	- [`GrpcBoom.aborted([message], [metadata])`](#grpcboomabortedmessage-metadata)
-	- [`GrpcBoom.outOfRange([message], [metadata])`](#grpcboomoutofrangemessage-metadata)
-	- [`GrpcBoom.unimplemented([message], [metadata])`](#grpcboomunimplementedmessage-metadata)
-	- [`GrpcBoom.internal([message], [metadata])`](#grpcboominternalmessage-metadata)
-	- [`GrpcBoom.unavailable([message], [metadata])`](#grpcboomunavailablemessage-metadata)
-	- [`GrpcBoom.dataLoss([message], [metadata])`](#grpcboomdatalossmessage-metadata)
-	- [`GrpcBoom.unauthenticated([message], [metadata])`](#grpcboomunauthenticatedmessage-metadata)
+    - [`GrpcBoom.unknown([message], [metadata])`](#grpcboomunknownmessage-metadata)
+    - [`GrpcBoom.invalidArgument([message], [metadata])`](#grpcboominvalidargumentmessage-metadata)
+    - [`GrpcBoom.deadlineExceeded([message], [metadata])`](#grpcboomdeadlineexceededmessage-metadata)
+    - [`GrpcBoom.notFound([message], [metadata])`](#grpcboomnotfoundmessage-metadata)
+    - [`GrpcBoom.alreadyExists([message], [metadata])`](#grpcboomalreadyexistsmessage-metadata)
+    - [`GrpcBoom.permissionDenied([message], [metadata])`](#grpcboompermissiondeniedmessage-metadata)
+    - [`GrpcBoom.resourceExhausted([message], [metadata])`](#grpcboomresourceexhaustedmessage-metadata)
+    - [`GrpcBoom.failedPrecondition([message], [metadata])`](#grpcboomfailedpreconditionmessage-metadata)
+    - [`GrpcBoom.aborted([message], [metadata])`](#grpcboomabortedmessage-metadata)
+    - [`GrpcBoom.outOfRange([message], [metadata])`](#grpcboomoutofrangemessage-metadata)
+    - [`GrpcBoom.unimplemented([message], [metadata])`](#grpcboomunimplementedmessage-metadata)
+    - [`GrpcBoom.internal([message], [metadata])`](#grpcboominternalmessage-metadata)
+    - [`GrpcBoom.unavailable([message], [metadata])`](#grpcboomunavailablemessage-metadata)
+    - [`GrpcBoom.dataLoss([message], [metadata])`](#grpcboomdatalossmessage-metadata)
+    - [`GrpcBoom.unauthenticated([message], [metadata])`](#grpcboomunauthenticatedmessage-metadata)
   - [Examples](#examples)
 
 <!-- tocstop -->
@@ -93,9 +95,9 @@ Decorates an error with `GrpcBoom` properties where:
 
 - `err` - the `Error / GrpcBoom` object to decorate.
 - `options` - optional object with the following settings: 
-	- `code` - the gRPC status code. Defaults to `13` if no status code is already set.
-	- `message` - the error message string
-	- `metadata` - an optional gRPC `Metadata` object.
+  - `code` - the gRPC status code. Defaults to `13` if no status code is already set.
+  - `message` - the error message string
+  - `metadata` - an optional gRPC `Metadata` object.
 
 ```typescript
 const error = new Error('Unexpected input');
@@ -106,9 +108,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 3,
-	"error": "INVALID_ARGUMENT",
-	"message": "Unexpected input"
+  "code": 3,
+  "error": "INVALID_ARGUMENT",
+  "message": "Unexpected input"
 }
 ```
 
@@ -133,9 +135,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 1,
-	"error": "CANCELLED",
-	"message": "Operation was cancelled"
+  "code": 1,
+  "error": "CANCELLED",
+  "message": "Operation was cancelled"
 }
 ```
 
@@ -154,9 +156,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 2,
-	"error": "UNKNOWN",
-	"message": "Unknown error"
+  "code": 2,
+  "error": "UNKNOWN",
+  "message": "Unknown error"
 }
 ```
 
@@ -175,9 +177,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 3,
-	"error": "INVALID_ARGUMENT",
-	"message": "Invalid query"
+  "code": 3,
+  "error": "INVALID_ARGUMENT",
+  "message": "Invalid query"
 }
 ```
 
@@ -196,9 +198,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 4,
-	"error": "DEADLINE_EXCEEDED",
-	"message": "Deadline expired before operation could complete"
+  "code": 4,
+  "error": "DEADLINE_EXCEEDED",
+  "message": "Deadline expired before operation could complete"
 }
 ```
 
@@ -217,9 +219,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 5,
-	"error": "NOT_FOUND",
-	"message": "Requested entity was not found"
+  "code": 5,
+  "error": "NOT_FOUND",
+  "message": "Requested entity was not found"
 }
 ```
 
@@ -238,9 +240,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 6,
-	"error": "ALREADY_EXISTS",
-	"message": "Requested entity already exists"
+  "code": 6,
+  "error": "ALREADY_EXISTS",
+  "message": "Requested entity already exists"
 }
 ```
 
@@ -259,9 +261,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 7,
-	"error": "PERMISSION_DENIED",
-	"message": "The caller does not have permission to execute the specified operation"
+  "code": 7,
+  "error": "PERMISSION_DENIED",
+  "message": "The caller does not have permission to execute the specified operation"
 }
 ```
 
@@ -280,9 +282,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 8,
-	"error": "RESOURCE_EXHAUSTED",
-	"message": "Resource has been exhausted"
+  "code": 8,
+  "error": "RESOURCE_EXHAUSTED",
+  "message": "Resource has been exhausted"
 }
 ```
 
@@ -295,7 +297,7 @@ Returns a `9` Failed Precondition error where:
 
 ```js
 GrpcBoom.failedPrecondition(
-	'Operation was rejected because the system is not in a state required for the operations execution'
+  'Operation was rejected because the system is not in a state required for the operations execution'
 );
 ```
 
@@ -303,9 +305,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 9,
-	"error": "FAILED_PRECONDITION",
-	"message": "Operation was rejected because the system is not in a state required for the operations execution"
+  "code": 9,
+  "error": "FAILED_PRECONDITION",
+  "message": "Operation was rejected because the system is not in a state required for the operations execution"
 }
 ```
 
@@ -324,9 +326,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 10,
-	"error": "ABORTED",
-	"message": "The operation was aborted"
+  "code": 10,
+  "error": "ABORTED",
+  "message": "The operation was aborted"
 }
 ```
 
@@ -345,9 +347,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 11,
-	"error": "OUT_OF_RANGE",
-	"message": "Operation was attempted past the valid range"
+  "code": 11,
+  "error": "OUT_OF_RANGE",
+  "message": "Operation was attempted past the valid range"
 }
 ```
 
@@ -366,9 +368,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 12,
-	"error": "UNIMPLEMENTED",
-	"message": "Operation is not implemented or not supported/enabled"
+  "code": 12,
+  "error": "UNIMPLEMENTED",
+  "message": "Operation is not implemented or not supported/enabled"
 }
 ```
 
@@ -387,9 +389,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 13,
-	"error": "INTERNAL",
-	"message": "Internal errors"
+  "code": 13,
+  "error": "INTERNAL",
+  "message": "Internal errors"
 }
 ```
 
@@ -408,9 +410,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 14,
-	"error": "UNAVAILABLE",
-	"message": "The service is currently unavailable"
+  "code": 14,
+  "error": "UNAVAILABLE",
+  "message": "The service is currently unavailable"
 }
 ```
 
@@ -429,9 +431,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 15,
-	"error": "DATA_LOSS",
-	"message": "Unrecoverable data loss or corruption"
+  "code": 15,
+  "error": "DATA_LOSS",
+  "message": "Unrecoverable data loss or corruption"
 }
 ```
 
@@ -444,7 +446,7 @@ Returns a `16` Unauthenticated error where:
 
 ```js
 GrpcBoom.unauthenticated(
-	'The request does not have valid authentication credentials for the operation'
+  'The request does not have valid authentication credentials for the operation'
 );
 ```
 
@@ -452,9 +454,9 @@ Generates the following response payload:
 
 ```json
 {
-	"code": 16,
-	"error": "UNAUTHENTICATED",
-	"message": "The request does not have valid authentication credentials for the operation"
+  "code": 16,
+  "error": "UNAUTHENTICATED",
+  "message": "The request does not have valid authentication credentials for the operation"
 }
 ```
 
@@ -464,50 +466,50 @@ See the examples in `src/example/index.ts`
 
 ```typescript
 import { Metadata } from 'grpc';
-import GrpcBoom from 'grpc-boom';
+import { GrpcBoom } from 'grpc-boom';
 
 export default class Example {
-	public constructorExample() {
-		console.log('-------------------------');
-		console.log('Constructor Example:');
-		console.log('-------------------------');
-		const metadata: Metadata = new Metadata();
-		metadata.set('constructed', 'true');
-		const grpcBoom = new GrpcBoom('Constructor Example!', { code: 1, metadata });
-		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`message: ${grpcBoom.message}`);
-		console.log(`code: ${grpcBoom.code}`);
-		console.log(`error: ${grpcBoom.error}`);
-		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
-	}
+  public constructorExample() {
+    console.log('-------------------------');
+    console.log('Constructor Example:');
+    console.log('-------------------------');
+    const metadata: Metadata = new Metadata();
+    metadata.set('constructed', 'true');
+    const grpcBoom = new GrpcBoom('Constructor Example!', { code: 1, metadata });
+    console.log(`isBoom: ${grpcBoom.isBoom}`);
+    console.log(`message: ${grpcBoom.message}`);
+    console.log(`code: ${grpcBoom.code}`);
+    console.log(`error: ${grpcBoom.error}`);
+    console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+  }
 
-	public boomifyExample() {
-		console.log('-------------------------');
-		console.log('Boomify Example:');
-		console.log('-------------------------');
-		const metadata: Metadata = new Metadata();
-		metadata.set('boomified', 'true');
-		const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), { code: 2, metadata });
-		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`message: ${grpcBoom.message}`);
-		console.log(`code: ${grpcBoom.code}`);
-		console.log(`error: ${grpcBoom.error}`);
-		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
-	}
+  public boomifyExample() {
+    console.log('-------------------------');
+    console.log('Boomify Example:');
+    console.log('-------------------------');
+    const metadata: Metadata = new Metadata();
+    metadata.set('boomified', 'true');
+    const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), { code: 2, metadata });
+    console.log(`isBoom: ${grpcBoom.isBoom}`);
+    console.log(`message: ${grpcBoom.message}`);
+    console.log(`code: ${grpcBoom.code}`);
+    console.log(`error: ${grpcBoom.error}`);
+    console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+  }
 
-	public convenienceExample() {
-		console.log('-------------------------');
-		console.log('Convenience Example:');
-		console.log('-------------------------');
-		const metadata: Metadata = new Metadata();
-		metadata.set('name', 'Cannot be more than 10 characters');
-		const grpcBoom = GrpcBoom.invalidArgument('Validation failed', metadata);
-		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`message: ${grpcBoom.message}`);
-		console.log(`code: ${grpcBoom.code}`);
-		console.log(`error: ${grpcBoom.error}`);
-		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
-	}
+  public convenienceExample() {
+    console.log('-------------------------');
+    console.log('Convenience Example:');
+    console.log('-------------------------');
+    const metadata: Metadata = new Metadata();
+    metadata.set('name', 'Cannot be more than 10 characters');
+    const grpcBoom = GrpcBoom.invalidArgument('Validation failed', metadata);
+    console.log(`isBoom: ${grpcBoom.isBoom}`);
+    console.log(`message: ${grpcBoom.message}`);
+    console.log(`code: ${grpcBoom.code}`);
+    console.log(`error: ${grpcBoom.error}`);
+    console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
+  }
 }
 
 const example = new Example();
@@ -519,30 +521,30 @@ example.convenienceExample();
 Generates the following response output:
 
 ```
--------------------------
-Constructor Example:
--------------------------
-isBoom: true
-message: Constructor Example!
-code: 1
-error: CANCELLED
-metadata: {"_internal_repr":{"constructed":["true"]}}
--------------------------
-Boomify Example:
--------------------------
-isBoom: true
-message: Boomify Example!
-code: 2
-error: UNKNOWN
-metadata: {"_internal_repr":{"boomified":["true"]}}
--------------------------
-Convenience Example:
--------------------------
-isBoom: true
-message: Validation failed
-code: 3
-error: INVALID_ARGUMENT
-metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
+  -------------------------
+  Constructor Example:
+  -------------------------
+  isBoom: true
+  message: Constructor Example!
+  code: 1
+  error: CANCELLED
+  metadata: {"_internal_repr":{"constructed":["true"]}}
+  -------------------------
+  Boomify Example:
+  -------------------------
+  isBoom: true
+  message: Boomify Example!
+  code: 2
+  error: UNKNOWN
+  metadata: {"_internal_repr":{"boomified":["true"]}}
+  -------------------------
+  Convenience Example:
+  -------------------------
+  isBoom: true
+  message: Validation failed
+  code: 3
+  error: INVALID_ARGUMENT
+  metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
 ```
 
 ## Contribution Guidelines
