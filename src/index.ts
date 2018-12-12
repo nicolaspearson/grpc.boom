@@ -73,7 +73,8 @@ export default class GrpcBoom extends Error {
 	}
 
 	public static boomify(error: any, options?: Options) {
-		let message: string = error && error.message ? error.message : 'An internal server error occurred';
+		let message: string =
+			error && error.message ? error.message : 'An internal server error occurred';
 		if (options && options.message && !(options.message instanceof Error)) {
 			message = options.message;
 		}

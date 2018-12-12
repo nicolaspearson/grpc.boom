@@ -1,6 +1,8 @@
 # gRPC Boom
 
-A gRPC implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It also supports gRPC `Metadata`, see examples below for more details.
+A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It also supports gRPC `Metadata`, see examples below for more details.
+
+This library has **zero** external dependencies.
 
 ### Installation
 
@@ -36,11 +38,11 @@ Generates the following response payload if "Name" is more than 10 characters:
 <!-- toc -->
 
 - [GrpcBoom](#boom)
-  - [`reformat(debug)`](#reformatdebug)
+  - [Overview](#overview)
   - [Helper Methods](#helper-methods)
     - [`new GrpcBoom(message, [options])`](#new-boommessage-options)
     - [`boomify(err, [options])`](#boomifyerr-options)
-  - [Supported gRPC Errors](#supported-grpc-errors)
+  - [Convenience Methods](#convenience-methods)
     - [`GrpcBoom.cancelled([message], [metadata])`](#grpcboomcancelledmessage-metadata)
 	- [`GrpcBoom.unknown([message], [metadata])`](#grpcboomunknownmessage-metadata)
 	- [`GrpcBoom.invalidArgument([message], [metadata])`](#grpcboominvalidargumentmessage-metadata)
@@ -61,7 +63,9 @@ Generates the following response payload if "Name" is more than 10 characters:
 
 <!-- tocstop -->
 
-**gRPC Boom** provides a set of utilities for returning gRPC errors. Each utility returns a `GrpcBoom`
+## Overview
+
+**gRPC Boom** provides a set of utilities for returning gRPC-friendly errors. Each utility returns a `GrpcBoom`
 error response object which includes the following properties:
 
 - `isBoom` - if `true`, indicates this is a `GrpcBoom` object instance.
