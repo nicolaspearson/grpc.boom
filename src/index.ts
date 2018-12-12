@@ -73,7 +73,7 @@ export default class GrpcBoom extends Error {
 	}
 
 	public static boomify(error: any, options?: Options) {
-		let message: string = error && error.message ? error.message : 'Unknown';
+		let message: string = error && error.message ? error.message : 'An internal server error occurred';
 		if (options && options.message && !(options.message instanceof Error)) {
 			message = options.message;
 		}
@@ -315,7 +315,7 @@ export default class GrpcBoom extends Error {
 
 	public reformat(debug?: boolean) {
 		if (this.code) {
-			this.error = codes.get(this.code) || 'Unknown';
+			this.error = codes.get(this.code) || 'INTERNAL';
 		}
 
 		if (this.code === 13 && debug !== true) {

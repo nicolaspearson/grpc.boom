@@ -1,6 +1,6 @@
 # gRPC Boom
 
-An implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It also supports gRPC `Metadata`, see examples below for more details.
+A gRPC implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It also supports gRPC `Metadata`, see examples below for more details.
 
 ### Installation
 
@@ -16,14 +16,14 @@ npm install grpc-boom --save
 import GrpcBoom from 'grpc-boom';
 
 function sayHelloStrict(call, callback) {
-	if (call.request.Name.length >= 10) {
+	if (call.request.getName().length > 10) {
 		return callback(GrpcBoom.invalidArgument('Length of "Name" cannot be more than 10 characters'), null);
 	}
-	callback(null, { Result: 'Hey, ' + call.request.Name + '!' });
+	callback(null, { Result: 'Hey, ' + call.request.getName() + '!' });
 }
 ```
 
-Generates the following response payload:
+Generates the following response payload if "Name" is more than 10 characters:
 
 ```json
 {
@@ -64,52 +64,55 @@ Generates the following response payload:
 **gRPC Boom** provides a set of utilities for returning gRPC errors. Each utility returns a `GrpcBoom`
 error response object which includes the following properties:
 
-- `isBoom` - if `true`, indicates this is a `GrpcBoom` object instance. Note that this boolean should
-  only be used if the error is an instance of `Error`.
+- `isBoom` - if `true`, indicates this is a `GrpcBoom` object instance.
 - `metadata` - an optional gRPC `Metadata` object.
 - `code` - the gRPC status code.
 - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 - `message` - the error message.
-- `typeof` - the constructor used to create the error (e.g. `GrpcBoom.invalidArgument`).
-- inherited `Error` properties.
-
-The `GrpcBoom` object also supports the following method:
 
 ## Helper Methods
 
+The `GrpcBoom` object also supports the following helper methods:
+
 ### `new GrpcBoom(message, [options])`
 
-Creates a new `GrpcBoom` object using the provided `message` and then calling
-[`boomify()`](#boomifyerr-options) to decorate the error with the `GrpcBoom` properties, where:
+Creates a new `GrpcBoom` object using the provided `message` and decorates the error with `GrpcBoom` properties, where:
 
-- `message` - the error message. If `message` is an error, it is the same as calling
-  [`boomify()`](#boomifyerr-options) directly.
-- `options` - and optional object where: - `code` - the gRPC status code. Defaults to `13` if no status code is already set.
-  - `metadata` - an optional gRPC `Metadata` object (assigned to `error.metadata`).
-  - `ctor` - constructor reference used to crop the exception call stack output.
-  - if `message` is an error object, also supports the other [`boomify()`](#boomifyerr-options)
-    options.
+- `message` - the error message.
+- `options` - and optional object where: 
+  - `code` - the gRPC status code. Defaults to `13` if no status code is set.
+  - `metadata` - an optional gRPC `Metadata` object.
 
 ### `boomify(err, [options])`
 
-Decorates an error with the `GrpcBoom` properties where:
+Decorates an error with `GrpcBoom` properties where:
 
-- `err` - the `Error | GrpcBoom` object to decorate.
-- `options` - optional object with the following optional settings: 
-	- `code` - the gRPC status code. Defaults to `13` if no status code is already set and `err` is not a `GrpcBoom` object. 
-	- `message` - error message string. If the error already has a message, the provided `message` is added as a prefix.
-	Defaults to no message.
-	- `metadata` - an optional gRPC `Metadata` object (assigned to `error.metadata`).
-	- `ctor` - constructor reference used to crop the exception call stack output.
+- `err` - the `Error / GrpcBoom` object to decorate.
+- `options` - optional object with the following settings: 
+	- `code` - the gRPC status code. Defaults to `13` if no status code is already set.
+	- `message` - the error message string
+	- `metadata` - an optional gRPC `Metadata` object.
 
 ```typescript
 const error = new Error('Unexpected input');
 GrpcBoom.boomify(error, { code: 3 });
 ```
 
-## Supported gRPC Errors
+Generates the following response payload:
 
-Below are convenience methods for every supported gRPC error:
+```json
+{
+	"code": 3,
+	"error": "INVALID_ARGUMENT",
+	"message": "Unexpected input"
+}
+```
+
+## Convenience Methods
+
+Below is a list of convenience methods that can be used to easily generate `gRPC` errors:
+
+_Note: See the [Examples](#examples) section for `Metadata` usage._
 
 ### `GrpcBoom.cancelled([message], [metadata])`
 
@@ -502,9 +505,14 @@ export default class Example {
 		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
 	}
 }
+
+const example = new Example();
+example.constructorExample();
+example.boomifyExample();
+example.convenienceExample();
 ```
 
-Generates the following response payloads:
+Generates the following response output:
 
 ```
 -------------------------
@@ -532,3 +540,21 @@ code: 3
 error: INVALID_ARGUMENT
 metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
 ```
+
+## Contribution Guidelines
+
+Contributions are encouraged, please see further details below:
+
+### Pull Requests
+
+Here are some basic rules to follow to ensure timely addition of your request:
+
+  1. Match coding style (braces, spacing, etc.).
+  2. If it is a feature, bugfix, or anything please only change the minimum amount of code required to satisfy the change.
+  3. Please keep PR titles easy to read and descriptive of changes, this will make them easier to merge :)
+  4. Pull requests _must_ be made against `develop` branch. Any other branch (unless specified by the maintainers) will get rejected.
+  5. Check for existing issues first, before filing a new issue.
+
+## License
+
+BSD-3 License
