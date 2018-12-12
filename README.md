@@ -194,7 +194,7 @@ metadata: {"_internal_repr":{"customised":["true"]}}
 
 ## Helper Methods
 
-The `GrpcBoom` object also supports the following helper methods:
+The `gRPC` Boom object also supports the following helper methods:
 
 ### `new GrpcBoom(message, [options])`
 
