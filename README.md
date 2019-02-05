@@ -1,6 +1,12 @@
 # gRPC Boom
 
+[![License][license-image]][license-url]
 [![Current Version](https://img.shields.io/npm/v/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
+[![npm](https://img.shields.io/npm/dw/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
+
+[license-url]: https://opensource.org/licenses/BSD-3-Clause
+[license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
+
 
 A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It supports gRPC `Metadata`, and can be `customised` as desired. See [Usage](#usage) examples below for more details.
 
@@ -11,6 +17,13 @@ This library has **zero** external dependencies.
 ```
 npm install grpc-boom --save
 ```
+
+## Test Coverage
+
+![Coverage lines](https://raw.githubusercontent.com/nicolaspearson/node.ts.ocr/master/coverage/badge-lines.svg?sanitize=true)
+![Coverage functions](https://raw.githubusercontent.com/nicolaspearson/node.ts.ocr/master/coverage/badge-functions.svg?sanitize=true)
+![Coverage branches](https://raw.githubusercontent.com/nicolaspearson/node.ts.ocr/master/coverage/badge-branches.svg?sanitize=true)
+![Coverage statements](https://raw.githubusercontent.com/nicolaspearson/node.ts.ocr/master/coverage/badge-statements.svg?sanitize=true)
 
 ## Table of Contents
 
@@ -62,6 +75,8 @@ error response object which includes the following properties:
 Below are some general usage examples:
 
 ### `gRPC Callback`
+
+Can be used as the first argument of a gRPC callback method:
 
 ```typescript
 import GrpcBoom from 'grpc-boom';
