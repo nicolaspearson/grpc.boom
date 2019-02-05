@@ -6,5 +6,6 @@ module.exports = {
 		'^.+\\.tsx?$': 'ts-jest'
 	},
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-	coverageReporters: ['json-summary', 'text', 'lcov']
+	coverageReporters: ['json-summary', 'text', 'lcov'],
+	coveragePathIgnorePatterns: ['/node_modules/', '/example/']
 };

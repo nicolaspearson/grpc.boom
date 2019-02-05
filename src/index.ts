@@ -173,10 +173,10 @@ export default class GrpcBoom extends Error {
 		super(message);
 
 		// Parse the options
-		const { code, ctor, error } = options
-			? options
-			: { code: GrpcBoom.fallbackStatus, ctor: GrpcBoom, error: undefined };
-		const errorInstance: any = new Error(message ? message : undefined);
+		const code = options && options.code !== undefined ? options.code : GrpcBoom.fallbackStatus;
+		const ctor = options && options.ctor !== undefined ? options.ctor : GrpcBoom;
+		const error = options && options.error !== undefined ? options.error : undefined;
+		const errorInstance: any = new Error(message !== undefined ? message : undefined);
 
 		// Set the defaults
 		errorInstance.isBoom = true;
@@ -186,7 +186,7 @@ export default class GrpcBoom extends Error {
 		errorInstance.reformat = this.reformat;
 		errorInstance.initialize = this.initialize;
 
-		if (options && options.metadata) {
+		if (options && options.metadata !== undefined) {
 			errorInstance.metadata = options.metadata;
 		}
 
@@ -441,7 +441,7 @@ export default class GrpcBoom extends Error {
 
 		this.code = code;
 
-		if (!message && !errorInstance.message) {
+		if (message === undefined && errorInstance.message === undefined) {
 			this.reformat();
 			message = this.error;
 		}
@@ -451,15 +451,15 @@ export default class GrpcBoom extends Error {
 	}
 
 	private reformat(debug?: boolean) {
-		if (!this.code) {
+		if (this.code === undefined) {
 			this.code = GrpcBoom.fallbackStatus;
 		}
 
-		if (!this.error) {
+		if (this.error === undefined) {
 			this.error = Status[this.code];
 		}
 
-		if (!this.message) {
+		if (this.message === undefined) {
 			this.message = GrpcBoom.fallbackMessage;
 		}
 	}
