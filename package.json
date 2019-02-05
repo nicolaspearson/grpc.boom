@@ -9,7 +9,9 @@
 		"prettier": "prettier --write \"src/**/*.{ts,tsx,css}\"",
 		"example": "ts-node ./src/example/index.ts",
 		"tslint": "tslint --fix -c tslint.json -p tsconfig.json",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "jest",
+		"test:coverage": "npm test -- --coverage",
+		"test:badges": "npm run test:coverage && jest-coverage-badges"
 	},
 	"keywords": [
 		"grpc",
@@ -26,10 +28,14 @@
 	"author": "Nicolas Pearson",
 	"license": "BSD-3-Clause",
 	"devDependencies": {
-		"@types/node": "~10.12.18",
-		"prettier": "~1.15.3",
-		"ts-node": "~7.0.1",
-		"tslint": "~5.12.0",
-		"typescript": "~3.2.2"
+		"@types/jest": "~23.3.13",
+		"@types/node": "~10.12.21",
+		"jest": "~23.6.0",
+		"jest-coverage-badges": "~1.1.2",
+		"prettier": "~1.16.3",
+		"ts-jest": "~23.10.5",
+		"ts-node": "~8.0.2",
+		"tslint": "~5.12.1",
+		"typescript": "~3.3.1"
 	}
 }

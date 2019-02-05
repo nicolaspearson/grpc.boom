@@ -3,14 +3,19 @@
 *.map
 .vscode/
 test/
+coverage/
 tsconfig.json
 *.tgz
 *.log
+*.pdf
+*.png
 .editorconfig
 .prettierrc
 tslint.json
+test
+*.config.js
 src/example
 
 # Keep
 !index.d.ts
-!src/index.js
+!src/**/*.js
