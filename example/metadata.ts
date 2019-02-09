@@ -1,57 +1,228 @@
-import { Metadata as IMetadata, MetadataValue } from '../index';
-
-// A simple class implementing very basic functionality that
-// mimics using the MetaData class from the grpc package.
+// A simple class implementing the basic functionality
+// provided by the MetaData class from the grpc package.
 // Do not use this implementation, it is simply for illustrative
 // purposes. You should be using the provided implementation
 // from the grpc package.
 
-// tslint:disable variable-name
-export default class Metadata implements IMetadata {
-	private _internal_repr: any = {};
+import * as http2 from 'http2';
 
-	constructor() {
-		this._internal_repr = {};
+const LEGAL_KEY_REGEX = /^[0-9a-z_.-]+$/;
+const LEGAL_NON_BINARY_VALUE_REGEX = /^[ -~]*$/;
+
+export type MetadataValue = string | Buffer;
+export type MetadataObject = Map<string, MetadataValue[]>;
+
+function isLegalKey(key: string): boolean {
+	return LEGAL_KEY_REGEX.test(key);
+}
+
+function isLegalNonBinaryValue(value: string): boolean {
+	return LEGAL_NON_BINARY_VALUE_REGEX.test(value);
+}
+
+function isBinaryKey(key: string): boolean {
+	return key.endsWith('-bin');
+}
+
+function normalizeKey(key: string): string {
+	return key.toLowerCase();
+}
+
+function validate(key: string, value?: MetadataValue): void {
+	if (!isLegalKey(key)) {
+		throw new Error('Metadata key "' + key + '" contains illegal characters');
+	}
+	if (value != null) {
+		if (isBinaryKey(key)) {
+			if (!(value instanceof Buffer)) {
+				throw new Error("keys that end with '-bin' must have Buffer values");
+			}
+		} else {
+			if (value instanceof Buffer) {
+				throw new Error("keys that don't end with '-bin' must have String values");
+			}
+			if (!isLegalNonBinaryValue(value)) {
+				throw new Error('Metadata string value "' + value + '" contains illegal characters');
+			}
+		}
+	}
+}
+
+/**
+ * A class for storing metadata. Keys are normalized to lowercase ASCII.
+ */
+export class Metadata {
+	protected internalRepr: MetadataObject = new Map<string, MetadataValue[]>();
+
+	/**
+	 * Sets the given value for the given key by replacing any other values
+	 * associated with that key. Normalizes the key.
+	 * @param key The key to whose value should be set.
+	 * @param value The value to set. Must be a buffer if and only
+	 *   if the normalized key ends with '-bin'.
+	 */
+	public set(key: string, value: MetadataValue): void {
+		key = normalizeKey(key);
+		validate(key, value);
+		this.internalRepr.set(key, [value]);
 	}
 
-	public set = (key: string, value: MetadataValue) => {
-		this._internal_repr[key] = [value];
-	};
+	/**
+	 * Adds the given value for the given key by appending to a list of previous
+	 * values associated with that key. Normalizes the key.
+	 * @param key The key for which a new value should be appended.
+	 * @param value The value to add. Must be a buffer if and only
+	 *   if the normalized key ends with '-bin'.
+	 */
+	public add(key: string, value: MetadataValue): void {
+		key = normalizeKey(key);
+		validate(key, value);
 
-	public add = (key: string, value: MetadataValue) => {
-		if (!this._internal_repr[key]) {
-			this._internal_repr[key] = [];
-		}
-		this._internal_repr[key].push(value);
-	};
+		const existingValue: MetadataValue[] | undefined = this.internalRepr.get(key);
 
-	public remove = (key: string) => {
-		if (Object.prototype.hasOwnProperty.call(this._internal_repr, key)) {
-			delete this._internal_repr[key];
-		}
-	};
-
-	public get = (key: string) => {
-		if (Object.prototype.hasOwnProperty.call(this._internal_repr, key)) {
-			return this._internal_repr[key];
+		if (existingValue === undefined) {
+			this.internalRepr.set(key, [value]);
 		} else {
-			return [];
+			existingValue.push(value);
 		}
-	};
+	}
 
-	public getMap = (): { [key: string]: MetadataValue } => {
-		const result: any = {};
-		Object.keys(this._internal_repr).forEach((key) => {
-			const values = this._internal_repr[key];
+	/**
+	 * Removes the given key and any associated values. Normalizes the key.
+	 * @param key The key whose values should be removed.
+	 */
+	public remove(key: string): void {
+		key = normalizeKey(key);
+		validate(key);
+		this.internalRepr.delete(key);
+	}
+
+	/**
+	 * Gets a list of all values associated with the key. Normalizes the key.
+	 * @param key The key whose value should be retrieved.
+	 * @return A list of values associated with the given key.
+	 */
+	public get(key: string): MetadataValue[] {
+		key = normalizeKey(key);
+		validate(key);
+		return this.internalRepr.get(key) || [];
+	}
+
+	/**
+	 * Gets a plain object mapping each key to the first value associated with it.
+	 * This reflects the most common way that people will want to see metadata.
+	 * @return A key/value mapping of the metadata.
+	 */
+	public getMap(): { [key: string]: MetadataValue } {
+		const result: { [key: string]: MetadataValue } = {};
+
+		this.internalRepr.forEach((values, key) => {
 			if (values.length > 0) {
-				result[key] = values[0];
+				const v = values[0];
+				result[key] = v instanceof Buffer ? v.slice() : v;
 			}
 		});
 		return result;
-	};
+	}
 
-	public clone = (): IMetadata => {
-		// Not implemented
-		return this;
-	};
+	/**
+	 * Clones the metadata object.
+	 * @return The newly cloned object.
+	 */
+	public clone(): Metadata {
+		const newMetadata = new Metadata();
+		const newInternalRepr = newMetadata.internalRepr;
+
+		this.internalRepr.forEach((value, key) => {
+			const clonedValue: MetadataValue[] = value.map((v) => {
+				if (v instanceof Buffer) {
+					return Buffer.from(v);
+				} else {
+					return v;
+				}
+			});
+
+			newInternalRepr.set(key, clonedValue);
+		});
+
+		return newMetadata;
+	}
+
+	/**
+	 * Merges all key-value pairs from a given Metadata object into this one.
+	 * If both this object and the given object have values in the same key,
+	 * values from the other Metadata object will be appended to this object's
+	 * values.
+	 * @param other A Metadata object.
+	 */
+	public merge(other: Metadata): void {
+		other.internalRepr.forEach((values, key) => {
+			const mergedValue: MetadataValue[] = (this.internalRepr.get(key) || []).concat(values);
+
+			this.internalRepr.set(key, mergedValue);
+		});
+	}
+
+	/**
+	 * Creates an OutgoingHttpHeaders object that can be used with the http2 API.
+	 */
+	public toHttp2Headers(): http2.OutgoingHttpHeaders {
+		// NOTE: Node <8.9 formats http2 headers incorrectly.
+		const result: http2.OutgoingHttpHeaders = {};
+		this.internalRepr.forEach((values, key) => {
+			// We assume that the user's interaction with this object is limited to
+			// through its public API (i.e. keys and values are already validated).
+			result[key] = values.map((value) => {
+				if (value instanceof Buffer) {
+					return value.toString('base64');
+				} else {
+					return value;
+				}
+			});
+		});
+		return result;
+	}
+
+	// For compatibility with the other Metadata implementation
+	public _getCoreRepresentation() {
+		return this.internalRepr;
+	}
+
+	/**
+	 * Returns a new Metadata object based fields in a given IncomingHttpHeaders
+	 * object.
+	 * @param headers An IncomingHttpHeaders object.
+	 */
+	public static fromHttp2Headers(headers: http2.IncomingHttpHeaders): Metadata {
+		const result = new Metadata();
+		Object.keys(headers).forEach((key) => {
+			// Reserved headers (beginning with `:`) are not valid keys.
+			if (key.charAt(0) === ':') {
+				return;
+			}
+
+			const values = headers[key];
+
+			if (isBinaryKey(key)) {
+				if (Array.isArray(values)) {
+					values.forEach((value) => {
+						result.add(key, Buffer.from(value, 'base64'));
+					});
+				} else if (values !== undefined) {
+					values.split(',').forEach((v) => {
+						result.add(key, Buffer.from(v.trim(), 'base64'));
+					});
+				}
+			} else {
+				if (Array.isArray(values)) {
+					values.forEach((value) => {
+						result.add(key, value);
+					});
+				} else if (values !== undefined) {
+					values.split(',').forEach((v) => result.add(key, v.trim()));
+				}
+			}
+		});
+		return result;
+	}
 }
