@@ -1,3 +1,5 @@
+import { Metadata } from 'grpc';
+
 /**
  * Enum of status codes that gRPC can return
  */
@@ -464,58 +466,3 @@ export default class GrpcBoom extends Error {
 		}
 	}
 }
-
-/**
- * A representation of the Metadata class in the grpc package
- */
-export interface Metadata {
-	/**
-	 * Sets the given value for the given key by replacing any other values
-	 * associated with that key. Normalizes the key.
-	 * @param key The key to whose value should be set.
-	 * @param value The value to set. Must be a buffer if and only
-	 *   if the normalized key ends with '-bin'.
-	 */
-	set(key: string, value: MetadataValue): void;
-
-	/**
-	 * Adds the given value for the given key by appending to a list of previous
-	 * values associated with that key. Normalizes the key.
-	 * @param key The key for which a new value should be appended.
-	 * @param value The value to add. Must be a buffer if and only
-	 *   if the normalized key ends with '-bin'.
-	 */
-	add(key: string, value: MetadataValue): void;
-
-	/**
-	 * Removes the given key and any associated values. Normalizes the key.
-	 * @param key The key whose values should be removed.
-	 */
-	remove(key: string): void;
-
-	/**
-	 * Gets a list of all values associated with the key. Normalizes the key.
-	 * @param key The key whose value should be retrieved.
-	 * @return A list of values associated with the given key.
-	 */
-	get(key: string): MetadataValue[];
-
-	/**
-	 * Gets a plain object mapping each key to the first value associated with it.
-	 * This reflects the most common way that people will want to see metadata.
-	 * @return A key/value mapping of the metadata.
-	 */
-	getMap(): { [key: string]: MetadataValue };
-
-	/**
-	 * Clones the metadata object.
-	 * @return The newly cloned object.
-	 */
-	clone(): Metadata;
-
-	// For compatibility with the other Metadata implementation
-	_getCoreRepresentation?(): Map<string, MetadataValue[]>;
-}
-
-export type MetadataValue = string | Buffer;
-export type MetadataObject = Map<string, MetadataValue[]>;

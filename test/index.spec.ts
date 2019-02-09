@@ -1,4 +1,5 @@
-import { Metadata } from '../example/metadata';
+import { Metadata } from 'grpc';
+
 import GrpcBoom, { Status } from '../src/index';
 
 // tslint:disable no-console
