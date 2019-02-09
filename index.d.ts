@@ -399,6 +399,9 @@ interface Metadata {
 	 * @return The newly cloned object.
 	 */
 	clone(): Metadata;
+
+	// For compatibility with the other Metadata implementation
+	_getCoreRepresentation?(): Map<string, MetadataValue[]>;
 }
 
 type MetadataValue = string | Buffer;
