@@ -4,10 +4,10 @@
 [![Current Version](https://img.shields.io/npm/v/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
 [![npm](https://img.shields.io/npm/dw/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
 ![](https://img.shields.io/bundlephobia/min/grpc-boom.svg?style=flat)
+[![Build Status](https://travis-ci.com/nicolaspearson/grpc.boom.svg?branch=master)](https://travis-ci.com/nicolaspearson/grpc.boom)
 
 [license-url]: https://opensource.org/licenses/BSD-3-Clause
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
-
 
 A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It supports gRPC `Metadata`, and can be `customised` as desired. See [Usage](#usage) examples below for more details.
 
@@ -89,10 +89,13 @@ Can be used as the first argument of a gRPC callback method:
 import GrpcBoom from 'grpc-boom';
 
 function sayHelloStrict(call, callback) {
-  if (call.request.getName().length > 10) {
-    return callback(GrpcBoom.invalidArgument('Length of "Name" cannot be more than 10 characters'), null);
-  }
-  callback(null, { Result: 'Hey, ' + call.request.getName() + '!' });
+	if (call.request.getName().length > 10) {
+		return callback(
+			GrpcBoom.invalidArgument('Length of "Name" cannot be more than 10 characters'),
+			null
+		);
+	}
+	callback(null, { Result: 'Hey, ' + call.request.getName() + '!' });
 }
 ```
 
@@ -100,9 +103,9 @@ Generates the following response payload if "Name" is more than 10 characters:
 
 ```json
 {
-  "code": 3,
-  "error": "INVALID_ARGUMENT",
-  "message": "Length of 'Name' cannot be more than 10 characters"
+	"code": 3,
+	"error": "INVALID_ARGUMENT",
+	"message": "Length of 'Name' cannot be more than 10 characters"
 }
 ```
 
@@ -115,12 +118,12 @@ import { Metadata } from 'grpc';
 import GrpcBoom, { Status } from 'grpc-boom';
 
 function example(): GrpcBoom {
-  const metadata: Metadata = new Metadata();
-  metadata.set('constructed', 'true');
-  return new GrpcBoom('Constructor Example!', { 
-    code: Status.CANCELLED,
-    metadata
-  });
+	const metadata: Metadata = new Metadata();
+	metadata.set('constructed', 'true');
+	return new GrpcBoom('Constructor Example!', {
+		code: Status.CANCELLED,
+		metadata
+	});
 }
 ```
 
@@ -143,12 +146,12 @@ import { Metadata } from 'grpc';
 import GrpcBoom, { Status } from 'grpc-boom';
 
 function example(): GrpcBoom {
-  const metadata: Metadata = new Metadata();
-  metadata.set('boomified', 'true');
-  return GrpcBoom.boomify(new Error('Boomify Example!'), {
-    code: Status.UNKNOWN,
-    metadata
-  });
+	const metadata: Metadata = new Metadata();
+	metadata.set('boomified', 'true');
+	return GrpcBoom.boomify(new Error('Boomify Example!'), {
+		code: Status.UNKNOWN,
+		metadata
+	});
 }
 ```
 
@@ -171,9 +174,9 @@ import { Metadata } from 'grpc';
 import GrpcBoom from 'grpc-boom';
 
 function example(): GrpcBoom {
-  const metadata: Metadata = new Metadata();
-  metadata.set('name', 'Cannot be more than 10 characters');
-  return GrpcBoom.invalidArgument('Validation failed', metadata);
+	const metadata: Metadata = new Metadata();
+	metadata.set('name', 'Cannot be more than 10 characters');
+	return GrpcBoom.invalidArgument('Validation failed', metadata);
 }
 ```
 
@@ -196,13 +199,13 @@ import { Metadata } from 'grpc';
 import GrpcBoom from 'grpc-boom';
 
 function example(): GrpcBoom {
-  const metadata: Metadata = new Metadata();
-  metadata.set('customised', 'true');
-  return GrpcBoom.boomify(new Error('Custom Example!'), {
-    code: 200,
-    metadata,
-    error: 'CUSTOM_EXAMPLE'
-  });
+	const metadata: Metadata = new Metadata();
+	metadata.set('customised', 'true');
+	return GrpcBoom.boomify(new Error('Custom Example!'), {
+		code: 200,
+		metadata,
+		error: 'CUSTOM_EXAMPLE'
+	});
 }
 ```
 
@@ -225,7 +228,7 @@ The `gRPC` Boom object also supports the following helper methods:
 Creates a new `GrpcBoom` object using the provided `message` and decorates the error with `GrpcBoom` properties, where:
 
 - `message` - the error message.
-- `options` - and optional object where: 
+- `options` - and optional object where:
   - `code` - the gRPC status code. Defaults to `2` if no status code is set.
   - `metadata` - an optional gRPC `Metadata` object.
   - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
@@ -235,7 +238,7 @@ Creates a new `GrpcBoom` object using the provided `message` and decorates the e
 Decorates an error with `GrpcBoom` properties where:
 
 - `error` - the `Error / GrpcBoom` object to decorate.
-- `options` - optional object with the following settings: 
+- `options` - optional object with the following settings:
   - `code` - the gRPC status code. Defaults to `2` if no status code is already set.
   - `message` - the error message string
   - `metadata` - an optional gRPC `Metadata` object.
@@ -250,9 +253,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 3,
-  "error": "INVALID_ARGUMENT",
-  "message": "Unexpected input"
+	"code": 3,
+	"error": "INVALID_ARGUMENT",
+	"message": "Unexpected input"
 }
 ```
 
@@ -275,9 +278,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 1,
-  "error": "CANCELLED",
-  "message": "Operation was cancelled"
+	"code": 1,
+	"error": "CANCELLED",
+	"message": "Operation was cancelled"
 }
 ```
 
@@ -296,9 +299,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 2,
-  "error": "UNKNOWN",
-  "message": "Unknown error"
+	"code": 2,
+	"error": "UNKNOWN",
+	"message": "Unknown error"
 }
 ```
 
@@ -317,9 +320,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 3,
-  "error": "INVALID_ARGUMENT",
-  "message": "Invalid query"
+	"code": 3,
+	"error": "INVALID_ARGUMENT",
+	"message": "Invalid query"
 }
 ```
 
@@ -338,9 +341,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 4,
-  "error": "DEADLINE_EXCEEDED",
-  "message": "Deadline expired before operation could complete"
+	"code": 4,
+	"error": "DEADLINE_EXCEEDED",
+	"message": "Deadline expired before operation could complete"
 }
 ```
 
@@ -359,9 +362,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 5,
-  "error": "NOT_FOUND",
-  "message": "Requested entity was not found"
+	"code": 5,
+	"error": "NOT_FOUND",
+	"message": "Requested entity was not found"
 }
 ```
 
@@ -380,9 +383,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 6,
-  "error": "ALREADY_EXISTS",
-  "message": "Requested entity already exists"
+	"code": 6,
+	"error": "ALREADY_EXISTS",
+	"message": "Requested entity already exists"
 }
 ```
 
@@ -401,9 +404,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 7,
-  "error": "PERMISSION_DENIED",
-  "message": "The caller does not have permission to execute the specified operation"
+	"code": 7,
+	"error": "PERMISSION_DENIED",
+	"message": "The caller does not have permission to execute the specified operation"
 }
 ```
 
@@ -422,9 +425,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 8,
-  "error": "RESOURCE_EXHAUSTED",
-  "message": "Resource has been exhausted"
+	"code": 8,
+	"error": "RESOURCE_EXHAUSTED",
+	"message": "Resource has been exhausted"
 }
 ```
 
@@ -437,7 +440,7 @@ Returns a `9` Failed Precondition error where:
 
 ```js
 GrpcBoom.failedPrecondition(
-  'Operation was rejected because the system is not in a state required for the operations execution'
+	'Operation was rejected because the system is not in a state required for the operations execution'
 );
 ```
 
@@ -445,9 +448,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 9,
-  "error": "FAILED_PRECONDITION",
-  "message": "Operation was rejected because the system is not in a state required for the operations execution"
+	"code": 9,
+	"error": "FAILED_PRECONDITION",
+	"message": "Operation was rejected because the system is not in a state required for the operations execution"
 }
 ```
 
@@ -466,9 +469,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 10,
-  "error": "ABORTED",
-  "message": "The operation was aborted"
+	"code": 10,
+	"error": "ABORTED",
+	"message": "The operation was aborted"
 }
 ```
 
@@ -487,9 +490,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 11,
-  "error": "OUT_OF_RANGE",
-  "message": "Operation was attempted past the valid range"
+	"code": 11,
+	"error": "OUT_OF_RANGE",
+	"message": "Operation was attempted past the valid range"
 }
 ```
 
@@ -508,9 +511,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 12,
-  "error": "UNIMPLEMENTED",
-  "message": "Operation is not implemented or not supported/enabled"
+	"code": 12,
+	"error": "UNIMPLEMENTED",
+	"message": "Operation is not implemented or not supported/enabled"
 }
 ```
 
@@ -529,9 +532,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 13,
-  "error": "INTERNAL",
-  "message": "Internal errors"
+	"code": 13,
+	"error": "INTERNAL",
+	"message": "Internal errors"
 }
 ```
 
@@ -550,9 +553,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 14,
-  "error": "UNAVAILABLE",
-  "message": "The service is currently unavailable"
+	"code": 14,
+	"error": "UNAVAILABLE",
+	"message": "The service is currently unavailable"
 }
 ```
 
@@ -571,9 +574,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 15,
-  "error": "DATA_LOSS",
-  "message": "Unrecoverable data loss or corruption"
+	"code": 15,
+	"error": "DATA_LOSS",
+	"message": "Unrecoverable data loss or corruption"
 }
 ```
 
@@ -586,7 +589,7 @@ Returns a `16` Unauthenticated error where:
 
 ```js
 GrpcBoom.unauthenticated(
-  'The request does not have valid authentication credentials for the operation'
+	'The request does not have valid authentication credentials for the operation'
 );
 ```
 
@@ -594,9 +597,9 @@ Generates the following response payload:
 
 ```json
 {
-  "code": 16,
-  "error": "UNAUTHENTICATED",
-  "message": "The request does not have valid authentication credentials for the operation"
+	"code": 16,
+	"error": "UNAUTHENTICATED",
+	"message": "The request does not have valid authentication credentials for the operation"
 }
 ```
 
@@ -608,11 +611,11 @@ Contributions are encouraged, please see further details below:
 
 Here are some basic rules to follow to ensure timely addition of your request:
 
-  1. Match coding style (braces, spacing, etc.).
-  2. If it is a feature, bugfix, or anything please only change the minimum amount of code required to satisfy the change.
-  3. Please keep PR titles easy to read and descriptive of changes, this will make them easier to merge :)
-  4. Pull requests _must_ be made against `develop` branch. Any other branch (unless specified by the maintainers) will get rejected.
-  5. Check for existing issues first, before filing a new issue.
+1. Match coding style (braces, spacing, etc.).
+2. If it is a feature, bugfix, or anything please only change the minimum amount of code required to satisfy the change.
+3. Please keep PR titles easy to read and descriptive of changes, this will make them easier to merge :)
+4. Pull requests _must_ be made against `develop` branch. Any other branch (unless specified by the maintainers) will get rejected.
+5. Check for existing issues first, before filing a new issue.
 
 ## License
 
