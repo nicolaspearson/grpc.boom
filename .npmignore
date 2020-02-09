@@ -16,6 +16,7 @@ test
 *.config.js
 src/example
 .github
+renovate.json
 .travis.yml
 
 # Keep
