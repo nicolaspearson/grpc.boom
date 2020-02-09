@@ -29,7 +29,7 @@
 	"author": "Nicolas Pearson",
 	"license": "BSD-3-Clause",
 	"devDependencies": {
-		"@types/jest": "~24.0.25",
+		"@types/jest": "~24.9.1",
 		"@types/node": "~12.12.26",
 		"grpc": "~1.24.2",
 		"jest": "~24.9.0",
