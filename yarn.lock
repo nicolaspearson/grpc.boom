@@ -3191,7 +3191,7 @@ node-notifier@^5.4.2:
     shellwords "^0.1.1"
     which "^1.3.0"
 
-node-pre-gyp@*, node-pre-gyp@^0.14.0:
+node-pre-gyp@^0.14.0:
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.14.0.tgz#9a0596533b877289bcad4e143982ca3d904ddc83"
   integrity sha512-+CvDC7ZttU/sSt9rFjix/P05iS43qHCOOGzcr3Ry99bXG7VX953+vFyEuph/tfqoYu8dttBkE86JSKBO2OzcxA==
@@ -3244,7 +3244,7 @@ npm-bundled@^1.0.1:
   dependencies:
     npm-normalize-package-bin "^1.0.1"
 
-npm-check-updates@~3.2.1:
+npm-check-updates@~3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-3.2.2.tgz#20719e4627f8f6ab87274adfdb30fda22027bde1"
   integrity sha512-smZLGQWYbNOQVL787LwxTKakhTll/GZ4EwlKRfskD+eTCSpxdwpbkUHbT0QxyCf1uZw86TXeAFGw8ETzmW3Fqw==
