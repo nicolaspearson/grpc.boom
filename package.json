@@ -38,7 +38,7 @@
 		"prettier": "^1.19.1",
 		"protobufjs": "^6.8.9",
 		"ts-jest": "^25.2.1",
-		"ts-node": "^8.6.2",
+		"ts-node": "^8.10.1",
 		"tslint": "^6.0.0",
 		"typescript": "^3.8.3"
 	}
