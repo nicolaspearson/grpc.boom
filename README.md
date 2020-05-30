@@ -4,7 +4,7 @@
 [![Current Version](https://img.shields.io/npm/v/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
 [![npm](https://img.shields.io/npm/dw/grpc-boom.svg)](https://www.npmjs.com/package/grpc-boom)
 ![](https://img.shields.io/bundlephobia/min/grpc-boom.svg?style=flat)
-[![Build Status](https://travis-ci.com/nicolaspearson/grpc.boom.svg?branch=master)](https://travis-ci.com/nicolaspearson/grpc.boom)
+![Build Status](https://github.com/nicolaspearson/grpc.boom/workflows/Node%20CI/badge.svg)
 
 [license-url]: https://opensource.org/licenses/BSD-3-Clause
 [license-image]: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
