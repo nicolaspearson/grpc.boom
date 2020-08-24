@@ -34,7 +34,7 @@
 		"grpc": "^1.24.2",
 		"jest": "^26.0.1",
 		"jest-coverage-badges": "^1.1.2",
-		"npm-check-updates": "^6.0.1",
+		"npm-check-updates": "^7.1.1",
 		"prettier": "^2.0.5",
 		"protobufjs": "^6.9.0",
 		"ts-jest": "^26.0.0",
