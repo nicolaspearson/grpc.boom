@@ -11,7 +11,7 @@
 
 A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) library to help create gRPC-friendly error objects. It supports gRPC `Metadata`, and can be `customised` as desired. See [Usage](#usage) examples below for more details.
 
-This library has **zero** external dependencies, but it is assumed that you are using the `grpc` library.
+This library has **zero** external dependencies, but it is assumed that you are using the `@grpc/grpc-js` library.
 
 ## Installation
 
@@ -19,10 +19,10 @@ This library has **zero** external dependencies, but it is assumed that you are 
 npm install grpc-boom --save
 ```
 
-Install the `grpc` library:
+Install the `@grpc/grpc-js` library:
 
 ```
-npm install grpc --save
+npm install @grpc/grpc-js --save
 ```
 
 ## Test Coverage
