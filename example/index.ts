@@ -12,7 +12,7 @@ export default class Example {
 		metadata.set('constructed', 'true');
 		const grpcBoom = new GrpcBoom('Constructor Example!', { code: Status.CANCELLED, metadata });
 		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`details: ${grpcBoom.details}`);
+		console.log(`message: ${grpcBoom.message}`);
 		console.log(`code: ${grpcBoom.code}`);
 		console.log(`error: ${grpcBoom.error}`);
 		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
@@ -29,7 +29,7 @@ export default class Example {
 			metadata
 		});
 		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`details: ${grpcBoom.details}`);
+		console.log(`message: ${grpcBoom.message}`);
 		console.log(`code: ${grpcBoom.code}`);
 		console.log(`error: ${grpcBoom.error}`);
 		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
@@ -43,7 +43,7 @@ export default class Example {
 		metadata.set('name', 'Cannot be more than 10 characters');
 		const grpcBoom = GrpcBoom.invalidArgument('Validation failed', metadata);
 		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`details: ${grpcBoom.details}`);
+		console.log(`message: ${grpcBoom.message}`);
 		console.log(`code: ${grpcBoom.code}`);
 		console.log(`error: ${grpcBoom.error}`);
 		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);
@@ -61,7 +61,7 @@ export default class Example {
 			error: 'CUSTOM_EXAMPLE'
 		});
 		console.log(`isBoom: ${grpcBoom.isBoom}`);
-		console.log(`details: ${grpcBoom.details}`);
+		console.log(`message: ${grpcBoom.message}`);
 		console.log(`code: ${grpcBoom.code}`);
 		console.log(`error: ${grpcBoom.error}`);
 		console.log(`metadata: ${JSON.stringify(grpcBoom.metadata)}`);

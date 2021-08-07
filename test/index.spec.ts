@@ -11,7 +11,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = new GrpcBoom('Constructor Example!', { code: Status.CANCELLED, metadata });
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Constructor Example!');
+		expect(grpcBoom.message).toEqual('Constructor Example!');
 		expect(grpcBoom.code).toEqual(1);
 		expect(grpcBoom.error).toEqual('CANCELLED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -34,7 +34,7 @@ describe('Test Public Functions', () => {
 		});
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Boomify Example!');
+		expect(grpcBoom.message).toEqual('Boomify Example!');
 		expect(grpcBoom.code).toEqual(2);
 		expect(grpcBoom.error).toEqual('UNKNOWN');
 		expect(grpcBoom.name).toEqual('Error');
@@ -58,7 +58,7 @@ describe('Test Public Functions', () => {
 		});
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Custom Example!');
+		expect(grpcBoom.message).toEqual('Custom Example!');
 		expect(grpcBoom.code).toEqual(200);
 		expect(grpcBoom.error).toEqual('CUSTOM_EXAMPLE');
 		expect(grpcBoom.name).toEqual('Error');
@@ -78,7 +78,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.ok('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(0);
 		expect(grpcBoom.error).toEqual('OK');
 		expect(grpcBoom.name).toEqual('Error');
@@ -98,7 +98,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.cancelled('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(1);
 		expect(grpcBoom.error).toEqual('CANCELLED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -118,7 +118,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.unknown('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(2);
 		expect(grpcBoom.error).toEqual('UNKNOWN');
 		expect(grpcBoom.name).toEqual('Error');
@@ -138,7 +138,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.invalidArgument('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(3);
 		expect(grpcBoom.error).toEqual('INVALID_ARGUMENT');
 		expect(grpcBoom.name).toEqual('Error');
@@ -158,7 +158,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.deadlineExceeded('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(4);
 		expect(grpcBoom.error).toEqual('DEADLINE_EXCEEDED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -178,7 +178,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.notFound('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(5);
 		expect(grpcBoom.error).toEqual('NOT_FOUND');
 		expect(grpcBoom.name).toEqual('Error');
@@ -198,7 +198,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.alreadyExists('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(6);
 		expect(grpcBoom.error).toEqual('ALREADY_EXISTS');
 		expect(grpcBoom.name).toEqual('Error');
@@ -218,7 +218,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.permissionDenied('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(7);
 		expect(grpcBoom.error).toEqual('PERMISSION_DENIED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -238,7 +238,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.resourceExhausted('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(8);
 		expect(grpcBoom.error).toEqual('RESOURCE_EXHAUSTED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -258,7 +258,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.failedPrecondition('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(9);
 		expect(grpcBoom.error).toEqual('FAILED_PRECONDITION');
 		expect(grpcBoom.name).toEqual('Error');
@@ -278,7 +278,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.aborted('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(10);
 		expect(grpcBoom.error).toEqual('ABORTED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -298,7 +298,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.outOfRange('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(11);
 		expect(grpcBoom.error).toEqual('OUT_OF_RANGE');
 		expect(grpcBoom.name).toEqual('Error');
@@ -318,7 +318,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.unimplemented('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(12);
 		expect(grpcBoom.error).toEqual('UNIMPLEMENTED');
 		expect(grpcBoom.name).toEqual('Error');
@@ -338,7 +338,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.internal('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(13);
 		expect(grpcBoom.error).toEqual('INTERNAL');
 		expect(grpcBoom.name).toEqual('Error');
@@ -358,7 +358,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.unavailable('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(14);
 		expect(grpcBoom.error).toEqual('UNAVAILABLE');
 		expect(grpcBoom.name).toEqual('Error');
@@ -378,7 +378,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.dataLoss('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(15);
 		expect(grpcBoom.error).toEqual('DATA_LOSS');
 		expect(grpcBoom.name).toEqual('Error');
@@ -398,7 +398,7 @@ describe('Test Public Functions', () => {
 		const grpcBoom = GrpcBoom.unauthenticated('Convenience', metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
-		expect(grpcBoom.details).toEqual('Convenience');
+		expect(grpcBoom.message).toEqual('Convenience');
 		expect(grpcBoom.code).toEqual(16);
 		expect(grpcBoom.error).toEqual('UNAUTHENTICATED');
 		expect(grpcBoom.name).toEqual('Error');

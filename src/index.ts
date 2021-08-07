@@ -1,4 +1,4 @@
-import { Metadata } from '@grpc/grpc-js';
+import { Metadata, ServiceError } from '@grpc/grpc-js';
 
 /**
  * Enum of status codes that gRPC can return
@@ -143,26 +143,32 @@ export interface Options {
 	/** additional error information. */
 	metadata?: Metadata;
 	/** constructor reference. */
-	ctor?: (details: string, metadata?: Metadata) => any;
+	ctor?: (message: string, metadata?: Metadata) => any;
 	/** error - the gRPC status message. */
 	error?: string;
-	/** details - the error details. */
-	details?: string | Error;
+	/** message - the error message. */
+	message?: string | Error;
 }
 
-export default class GrpcBoom extends Error {
+export default class GrpcBoom implements ServiceError {
 	public isBoom: boolean;
 
-	public metadata?: Metadata;
+	public metadata: Metadata;
 
 	/** code - the gRPC status code. */
-	public code?: number;
+	public code: number;
 
 	/** error - the gRPC status message. */
 	public error?: string;
 
+	/** message - the error message. */
+	public message: string;
+
 	/** details - the error details. */
 	public details: string;
+
+	/** name - the error name. */
+	public name: string;
 
 	public static [Symbol.hasInstance](instance: GrpcBoom) {
 		return instance && instance.isBoom;
@@ -171,39 +177,34 @@ export default class GrpcBoom extends Error {
 	private static fallbackStatus: number = Status.UNKNOWN;
 	private static fallbackMessage: string = 'An unknown error occurred';
 
-	constructor(details: string, options?: Options) {
-		super(details);
-
+	constructor(message: string, options?: Options) {
 		// Parse the options
 		const code = options && options.code !== undefined ? options.code : GrpcBoom.fallbackStatus;
 		const ctor = options && options.ctor !== undefined ? options.ctor : GrpcBoom;
 		const error = options && options.error !== undefined ? options.error : undefined;
-		const errorInstance: any = new Error(details !== undefined ? details : undefined);
 
 		// Set the defaults
-		errorInstance.isBoom = true;
-		errorInstance.code = code;
-		errorInstance.error = error;
-		errorInstance.details = details;
-		errorInstance.reformat = this.reformat;
-		errorInstance.initialize = this.initialize;
+		this.name = 'Error';
+		this.isBoom = true;
+		this.code = code;
+		this.error = error;
+		this.message = message;
 
 		if (options && options.metadata !== undefined) {
-			errorInstance.metadata = options.metadata;
+			this.metadata = options.metadata;
 		}
 
-		errorInstance.reformat();
+		this.reformat();
 
 		// Filter the stack to our external API
-		Error.captureStackTrace(errorInstance, ctor);
-		return errorInstance;
+		Error.captureStackTrace(this, ctor);
 	}
 
 	public static boomify(errorInstance: any, options?: Options) {
-		let details: string =
-			errorInstance.message ?? errorInstance.details ?? GrpcBoom.fallbackMessage;
-		if (options && options.details && !(options.details instanceof Error)) {
-			details = options.details;
+		let message: string =
+			errorInstance && errorInstance.message ? errorInstance.message : GrpcBoom.fallbackMessage;
+		if (options && options.message && !(options.message instanceof Error)) {
+			message = options.message;
 		}
 		let code: number =
 			errorInstance && errorInstance.code ? errorInstance.code : GrpcBoom.fallbackStatus;
@@ -215,7 +216,7 @@ export default class GrpcBoom extends Error {
 			error = options.error;
 		}
 		if (errorInstance && errorInstance.isBoom) {
-			errorInstance.details = details;
+			errorInstance.message = message;
 			errorInstance.code = code;
 			errorInstance.error = error;
 			return errorInstance;
@@ -227,22 +228,22 @@ export default class GrpcBoom extends Error {
 			newOptions.metadata = options.metadata;
 		}
 
-		return new GrpcBoom(details, newOptions);
+		return new GrpcBoom(message, newOptions);
 	}
 
 	/**
 	 * Not an error; returned on success
 	 */
-	public static ok(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.OK, metadata, this.ok);
+	public static ok(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.OK, metadata, this.ok);
 	}
 
 	/**
 	 * The operation was cancelled (typically by the caller).
 	 */
 
-	public static cancelled(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.CANCELLED, metadata, this.cancelled);
+	public static cancelled(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.CANCELLED, metadata, this.cancelled);
 	}
 
 	/**
@@ -253,8 +254,8 @@ export default class GrpcBoom extends Error {
 	 * may be converted to this error.
 	 */
 
-	public static unknown(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.UNKNOWN, metadata, this.unknown);
+	public static unknown(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.UNKNOWN, metadata, this.unknown);
 	}
 
 	/**
@@ -264,8 +265,8 @@ export default class GrpcBoom extends Error {
 	 * (e.g., a malformed file name).
 	 */
 
-	public static invalidArgument(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.INVALID_ARGUMENT, metadata, this.invalidArgument);
+	public static invalidArgument(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.INVALID_ARGUMENT, metadata, this.invalidArgument);
 	}
 
 	/**
@@ -275,23 +276,23 @@ export default class GrpcBoom extends Error {
 	 * successful response from a server could have been delayed long
 	 * enough for the deadline to expire.
 	 */
-	public static deadlineExceeded(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.DEADLINE_EXCEEDED, metadata, this.deadlineExceeded);
+	public static deadlineExceeded(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.DEADLINE_EXCEEDED, metadata, this.deadlineExceeded);
 	}
 
 	/**
 	 * Some requested entity (e.g., file or directory) was not found.
 	 */
-	public static notFound(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.NOT_FOUND, metadata, this.notFound);
+	public static notFound(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.NOT_FOUND, metadata, this.notFound);
 	}
 
 	/**
 	 * Some entity that we attempted to create (e.g., file or directory)
 	 * already exists.
 	 */
-	public static alreadyExists(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.ALREADY_EXISTS, metadata, this.alreadyExists);
+	public static alreadyExists(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.ALREADY_EXISTS, metadata, this.alreadyExists);
 	}
 
 	/**
@@ -302,16 +303,16 @@ export default class GrpcBoom extends Error {
 	 * used if the caller can not be identified (use UNAUTHENTICATED
 	 * instead for those errors).
 	 */
-	public static permissionDenied(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.PERMISSION_DENIED, metadata, this.permissionDenied);
+	public static permissionDenied(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.PERMISSION_DENIED, metadata, this.permissionDenied);
 	}
 
 	/**
 	 * Some resource has been exhausted, perhaps a per-user quota, or
 	 * perhaps the entire file system is out of space.
 	 */
-	public static resourceExhausted(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.RESOURCE_EXHAUSTED, metadata, this.resourceExhausted);
+	public static resourceExhausted(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.RESOURCE_EXHAUSTED, metadata, this.resourceExhausted);
 	}
 
 	/**
@@ -336,8 +337,8 @@ export default class GrpcBoom extends Error {
 	 *    server does not match the condition. E.g., conflicting
 	 *    read-modify-write on the same resource.
 	 */
-	public static failedPrecondition(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.FAILED_PRECONDITION, metadata, this.failedPrecondition);
+	public static failedPrecondition(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.FAILED_PRECONDITION, metadata, this.failedPrecondition);
 	}
 
 	/**
@@ -347,8 +348,8 @@ export default class GrpcBoom extends Error {
 	 * See litmus test above for deciding between FAILED_PRECONDITION,
 	 * ABORTED, and UNAVAILABLE.
 	 */
-	public static aborted(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.ABORTED, metadata, this.aborted);
+	public static aborted(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.ABORTED, metadata, this.aborted);
 	}
 
 	/**
@@ -368,15 +369,15 @@ export default class GrpcBoom extends Error {
 	 * a space can easily look for an OUT_OF_RANGE error to detect when
 	 * they are done.
 	 */
-	public static outOfRange(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.OUT_OF_RANGE, metadata, this.outOfRange);
+	public static outOfRange(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.OUT_OF_RANGE, metadata, this.outOfRange);
 	}
 
 	/**
 	 * Operation is not implemented or not supported/enabled in this service.
 	 */
-	public static unimplemented(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.UNIMPLEMENTED, metadata, this.unimplemented);
+	public static unimplemented(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.UNIMPLEMENTED, metadata, this.unimplemented);
 	}
 
 	/**
@@ -384,8 +385,8 @@ export default class GrpcBoom extends Error {
 	 * system has been broken. If you see one of these errors,
 	 * something is very broken.
 	 */
-	public static internal(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.INTERNAL, metadata, this.internal);
+	public static internal(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.INTERNAL, metadata, this.internal);
 	}
 
 	/**
@@ -396,43 +397,43 @@ export default class GrpcBoom extends Error {
 	 * See litmus test above for deciding between FAILED_PRECONDITION,
 	 * ABORTED, and UNAVAILABLE.
 	 */
-	public static unavailable(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.UNAVAILABLE, metadata, this.unavailable);
+	public static unavailable(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.UNAVAILABLE, metadata, this.unavailable);
 	}
 
 	/**
 	 * Unrecoverable data loss or corruption.
 	 */
-	public static dataLoss(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.DATA_LOSS, metadata, this.dataLoss);
+	public static dataLoss(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.DATA_LOSS, metadata, this.dataLoss);
 	}
 
 	/**
 	 * The request does not have valid authentication credentials for the
 	 * operation.
 	 */
-	public static unauthenticated(details: string, metadata?: Metadata): GrpcBoom {
-		return this.create(details, Status.UNAUTHENTICATED, metadata, this.unauthenticated);
+	public static unauthenticated(message: string, metadata?: Metadata): GrpcBoom {
+		return this.create(message, Status.UNAUTHENTICATED, metadata, this.unauthenticated);
 	}
 
 	private static create(
-		details: string,
+		message: string,
 		code: number,
 		metadata?: Metadata,
-		ctor?: (details: string, metadata?: Metadata) => any
+		ctor?: (message: string, metadata?: Metadata) => any
 	): GrpcBoom {
-		const grpcBoom: GrpcBoom = new GrpcBoom(details, {
+		const grpcBoom: GrpcBoom = new GrpcBoom(message, {
 			code,
 			metadata,
 			ctor,
 		});
-		return grpcBoom.initialize(grpcBoom, code, details, metadata);
+		return grpcBoom.initialize(grpcBoom, code, message, metadata);
 	}
 
 	private initialize(
 		errorInstance: GrpcBoom,
 		code: number,
-		details?: string | Error,
+		message?: string | Error,
 		metadata?: Metadata
 	) {
 		this.isBoom = true;
@@ -443,9 +444,9 @@ export default class GrpcBoom extends Error {
 
 		this.code = code;
 
-		if (details === undefined && errorInstance.details === undefined) {
+		if (message === undefined && errorInstance.message === undefined) {
 			this.reformat();
-			details = this.error;
+			message = this.error;
 		}
 
 		this.reformat();
@@ -461,8 +462,8 @@ export default class GrpcBoom extends Error {
 			this.error = Status[this.code];
 		}
 
-		if (this.details === undefined) {
-			this.details = GrpcBoom.fallbackMessage;
+		if (this.message === undefined) {
+			this.message = GrpcBoom.fallbackMessage;
 		}
 	}
 }
