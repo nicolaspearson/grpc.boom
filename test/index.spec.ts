@@ -1,11 +1,11 @@
-import { Metadata } from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 
 import GrpcBoom, { Status } from '../src/index';
 
 // tslint:disable no-console
 
 describe('Test Public Functions', () => {
-	it('should be able to create a boom object from the constructor', async (done) => {
+	test('should be able to create a boom object from the constructor', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('constructed', 'true');
 		const grpcBoom = new GrpcBoom('Constructor Example!', { code: Status.CANCELLED, metadata });
@@ -22,10 +22,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using boomify', async (done) => {
+	test('should be able to create a boom object using boomify', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('boomified', 'true');
 		const grpcBoom = GrpcBoom.boomify(new Error('Boomify Example!'), {
@@ -45,10 +45,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using a custom error', async (done) => {
+	test('should be able to create a boom object using a custom error', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('customised', 'true');
 		const grpcBoom = GrpcBoom.boomify(new Error('Custom Example!'), {
@@ -69,10 +69,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the ok convenience method', async (done) => {
+	test('should be able to create a boom object using the ok convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.ok('Convenience', metadata);
@@ -89,10 +89,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the cancelled convenience method', async (done) => {
+	test('should be able to create a boom object using the cancelled convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.cancelled('Convenience', metadata);
@@ -109,10 +109,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the unknown convenience method', async (done) => {
+	test('should be able to create a boom object using the unknown convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.unknown('Convenience', metadata);
@@ -129,10 +129,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the invalid argument convenience method', async (done) => {
+	test('should be able to create a boom object using the invalid argument convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.invalidArgument('Convenience', metadata);
@@ -149,10 +149,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the deadline exceeded convenience method', async (done) => {
+	test('should be able to create a boom object using the deadline exceeded convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.deadlineExceeded('Convenience', metadata);
@@ -169,10 +169,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the not found convenience method', async (done) => {
+	test('should be able to create a boom object using the not found convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.notFound('Convenience', metadata);
@@ -189,10 +189,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the already exists convenience method', async (done) => {
+	test('should be able to create a boom object using the already exists convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.alreadyExists('Convenience', metadata);
@@ -209,10 +209,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the permission denied convenience method', async (done) => {
+	test('should be able to create a boom object using the permission denied convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.permissionDenied('Convenience', metadata);
@@ -229,10 +229,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the resource exhausted convenience method', async (done) => {
+	test('should be able to create a boom object using the resource exhausted convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.resourceExhausted('Convenience', metadata);
@@ -249,10 +249,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the failed precondition convenience method', async (done) => {
+	test('should be able to create a boom object using the failed precondition convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.failedPrecondition('Convenience', metadata);
@@ -269,10 +269,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the aborted convenience method', async (done) => {
+	test('should be able to create a boom object using the aborted convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.aborted('Convenience', metadata);
@@ -289,10 +289,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the out of range convenience method', async (done) => {
+	test('should be able to create a boom object using the out of range convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.outOfRange('Convenience', metadata);
@@ -309,10 +309,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the unimplemented convenience method', async (done) => {
+	test('should be able to create a boom object using the unimplemented convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.unimplemented('Convenience', metadata);
@@ -329,10 +329,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the internal convenience method', async (done) => {
+	test('should be able to create a boom object using the internal convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.internal('Convenience', metadata);
@@ -349,10 +349,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the unavailable convenience method', async (done) => {
+	test('should be able to create a boom object using the unavailable convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.unavailable('Convenience', metadata);
@@ -369,10 +369,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the dataLoss convenience method', async (done) => {
+	test('should be able to create a boom object using the dataLoss convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.dataLoss('Convenience', metadata);
@@ -389,10 +389,10 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 
-	it('should be able to create a boom object using the unauthenticated convenience method', async (done) => {
+	test('should be able to create a boom object using the unauthenticated convenience method', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('convenience', 'true');
 		const grpcBoom = GrpcBoom.unauthenticated('Convenience', metadata);
@@ -409,6 +409,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-		done();
+
 	});
 });

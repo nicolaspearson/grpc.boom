@@ -1,4 +1,4 @@
-import { Metadata } from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 
 /**
  * Enum of status codes that gRPC can return
@@ -134,7 +134,7 @@ export enum Status {
 	 * The request does not have valid authentication credentials for the
 	 * operation.
 	 */
-	UNAUTHENTICATED = 16
+	UNAUTHENTICATED = 16,
 }
 
 export interface Options {
@@ -424,7 +424,7 @@ export default class GrpcBoom extends Error {
 		const grpcBoom: GrpcBoom = new GrpcBoom(message, {
 			code,
 			metadata,
-			ctor
+			ctor,
 		});
 		return grpcBoom.initialize(grpcBoom, code, message, metadata);
 	}
