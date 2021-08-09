@@ -31,7 +31,7 @@
 	"devDependencies": {
 		"@types/jest": "^26.0.24",
 		"@types/node": "^16.4.13",
-		"@grpc/grpc-js": "^1.3.6",
+		"@grpc/grpc-js": "^1.3.7",
 		"jest": "^27.0.6",
 		"jest-coverage-badges": "^1.1.2",
 		"npm-check-updates": "^11.8.3",
