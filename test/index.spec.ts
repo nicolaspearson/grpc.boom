@@ -391,16 +391,40 @@ describe('Grpc Boom', () => {
 	});
 
 	test('should convert a bad request http exception correctly', () => {
+		const metadata: Metadata = new Metadata();
+		metadata.set('boomified', 'true');
 		const httpException = {
 			code: 400,
 			message: 'Invalid input provided.',
 			details: 'Password must be more than 6 characters.'
 		};
-		const grpcBoom = GrpcBoom.fromHttpException(httpException);
+		const grpcBoom = GrpcBoom.fromHttpException(httpException, metadata);
 
 		expect(grpcBoom.isBoom).toEqual(true);
 		expect(grpcBoom.message).toEqual(httpException.message);
 		expect(grpcBoom.details).toEqual(httpException.details);
+		expect(grpcBoom.code).toEqual(GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpException.code]);
+		expect(grpcBoom.error).toEqual('INVALID_ARGUMENT');
+		expect(grpcBoom.name).toEqual('Error');
+		expect(grpcBoom.metadata).toBeDefined();
+		if (grpcBoom.metadata) {
+			const metadataValue = grpcBoom.metadata.get('boomified');
+			expect(metadataValue.length).toBeGreaterThan(0);
+			expect(metadataValue[0]).toEqual('true');
+		}
+	});
+
+	test('should convert a bad request http exception with data details correctly', () => {
+		const httpException = {
+			code: 400,
+			message: 'Invalid input provided.',
+			data: { password: 'Password must be more than 6 characters.' }
+		};
+		const grpcBoom = GrpcBoom.fromHttpException(httpException);
+
+		expect(grpcBoom.isBoom).toEqual(true);
+		expect(grpcBoom.message).toEqual(httpException.message);
+		expect(grpcBoom.details).toEqual(JSON.stringify(httpException.data, null, 2));
 		expect(grpcBoom.code).toEqual(GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpException.code]);
 		expect(grpcBoom.error).toEqual('INVALID_ARGUMENT');
 		expect(grpcBoom.name).toEqual('Error');

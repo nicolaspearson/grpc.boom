@@ -441,25 +441,31 @@ export default class GrpcBoom implements ServiceError {
 	};
 
 	/**
-	 * Attempts to convert an http exception to a grpc boom error.
-	 * Fails over to an unknown grpc error if the error code cannot be inferred.
+	 * This method attempts to convert an http exception to a grpc
+	 * boom error, it will fail-over to an unknown grpc error if the
+	 * error code cannot be inferred. This method supports *Boom* errors.
 	 */
-	public static fromHttpException(httpException: {
-		code?: number;
-		details?: string;
-		message?: string;
-		output?: { payload?: { message?: string; statusCode?: number }, statusCode?: number }
-		status?: number;
-		statusCode?: number
-	}): GrpcBoom {
-		const { code, details, message, output, status, statusCode } = httpException;
+	public static fromHttpException(
+		httpException: {
+			code?: number;
+			data?: Record<string, unknown>;
+			details?: string;
+			message?: string;
+			output?: { payload?: { message?: string; statusCode?: number }, statusCode?: number }
+			status?: number;
+			statusCode?: number
+		},
+		metadata?: Metadata
+	): GrpcBoom {
+		const { code, data, details, message, output, status, statusCode } = httpException;
 		const httpStatusCode: number | undefined = code ?? status ?? statusCode ?? output?.statusCode ?? output?.payload?.statusCode;
 		const grpcErrorCode = httpStatusCode ? GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpStatusCode] : GrpcBoom.fallbackStatus;
+		const dataDetails: string | undefined = data ? JSON.stringify(data, null, 2) : undefined;
 		return GrpcBoom.boomify({
 			code: grpcErrorCode,
-			details,
+			details: details ?? dataDetails,
 			message: message ?? output?.payload?.message,
-		});
+		}, { metadata });
 	}
 
 	private static create(

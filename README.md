@@ -41,6 +41,7 @@ npm install @grpc/grpc-js --save
     - [`gRPC Callback`](#grpc-callback)
     - [`Constructor`](#constructor)
     - [`Boomify`](#boomify)
+	- [`From Http Exception`](#from-http-exception)
     - [`Convenience`](#convenience)
     - [`Custom`](#custom)
   - [Helper Methods](#helper-methods)
@@ -115,7 +116,7 @@ Generates the following response payload if "Name" is more than 10 characters:
 See [`new GrpcBoom(message, [options])`](#new-grpcboommessage-options) for details.
 
 ```typescript
-import { Metadata } from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 import GrpcBoom, { Status } from 'grpc-boom';
 
 function example(): GrpcBoom {
@@ -143,7 +144,7 @@ metadata: {"_internal_repr":{"constructed":["true"]}}
 See [`boomify(error, [options])`](#boomifyerror-options) for details.
 
 ```typescript
-import { Metadata } from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 import GrpcBoom, { Status } from 'grpc-boom';
 
 function example(): GrpcBoom {
@@ -166,12 +167,44 @@ error: UNKNOWN
 metadata: {"_internal_repr":{"boomified":["true"]}}
 ```
 
+### `From Http Exception`
+
+This method attempts to convert an http exception to a grpc boom error, it will fail-over to an 
+unknown grpc error if the error code cannot be inferred. This method supports *Boom* errors.
+
+```typescript
+import { Metadata } from '@grpc/grpc-js';
+import GrpcBoom, { Status } from 'grpc-boom';
+
+function example(): GrpcBoom {
+	const metadata: Metadata = new Metadata();
+	metadata.set('boomified', 'true');
+	const httpException = {
+		code: 400,
+		message: 'Invalid input provided.',
+		details: 'Password must be more than 6 characters.'
+	};
+	return GrpcBoom.fromHttpException(httpException, metadata);
+}
+```
+
+Returns a gRPC Boom object with the following properties:
+
+```json
+isBoom: true,
+code: 3,
+error: 'INVALID_ARGUMENT',
+message: 'Invalid input provided.',
+details: 'Password must be more than 6 characters.',
+metadata: {"_internal_repr":{"boomified":["true"]}}
+```
+
 ### `Convenience`
 
 See [Convenience Methods](#convenience-methods) for a list of available methods.
 
 ```typescript
-import { Metadata } from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 import GrpcBoom from 'grpc-boom';
 
 function example(): GrpcBoom {
@@ -196,7 +229,7 @@ metadata: {"_internal_repr":{"name":["Cannot be more than 10 characters"]}}
 You can also customise the gRPC Boom object:
 
 ```typescript
-import { Metadata } from 'grpc';
+import { Metadata } from '@grpc/grpc-js';
 import GrpcBoom from 'grpc-boom';
 
 function example(): GrpcBoom {

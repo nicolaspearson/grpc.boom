@@ -178,18 +178,24 @@ export default class GrpcBoom implements ServiceError {
 	public static boomify(error: any, options?: Options): GrpcBoom;
 
 	/**
-	 * Attempts to convert an http exception to a grpc boom error.
-	 * Fails over to an unknown grpc error if the error code cannot be inferred.
+	 * This method attempts to convert an http exception to a grpc
+	 * boom error, it will fail-over to an unknown grpc error if the
+	 * error code cannot be inferred. This method supports *Boom* errors.
 	 * @param httpException the http exception.
+	 * @param metadata optional grpc metadata.
 	 */
-	public static fromHttpException(httpException: {
-		code?: number;
-		details?: string;
-		message?: string;
-		output?: { payload?: { message?: string; statusCode?: number }, statusCode?: number }
-		status?: number;
-		statusCode?: number
-	}): GrpcBoom;
+	public static fromHttpException(
+		httpException: {
+			code?: number;
+			data?: Record<string, unknown>;
+			details?: string;
+			message?: string;
+			output?: { payload?: { message?: string; statusCode?: number }, statusCode?: number }
+			status?: number;
+			statusCode?: number
+		},
+		metadata?: Metadata
+	): GrpcBoom;
 
 	/**
 	 * Not an error; returned on success
