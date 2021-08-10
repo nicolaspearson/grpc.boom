@@ -47,22 +47,22 @@ npm install @grpc/grpc-js --save
     - [`new GrpcBoom(message, [options])`](#new-grpcboommessage-options)
     - [`boomify(error, [options])`](#boomifyerror-options)
   - [Convenience Methods](#convenience-methods)
-    - [`GrpcBoom.cancelled([message], [metadata])`](#grpcboomcancelledmessage-metadata)
-    - [`GrpcBoom.unknown([message], [metadata])`](#grpcboomunknownmessage-metadata)
-    - [`GrpcBoom.invalidArgument([message], [metadata])`](#grpcboominvalidargumentmessage-metadata)
-    - [`GrpcBoom.deadlineExceeded([message], [metadata])`](#grpcboomdeadlineexceededmessage-metadata)
-    - [`GrpcBoom.notFound([message], [metadata])`](#grpcboomnotfoundmessage-metadata)
-    - [`GrpcBoom.alreadyExists([message], [metadata])`](#grpcboomalreadyexistsmessage-metadata)
-    - [`GrpcBoom.permissionDenied([message], [metadata])`](#grpcboompermissiondeniedmessage-metadata)
-    - [`GrpcBoom.resourceExhausted([message], [metadata])`](#grpcboomresourceexhaustedmessage-metadata)
-    - [`GrpcBoom.failedPrecondition([message], [metadata])`](#grpcboomfailedpreconditionmessage-metadata)
-    - [`GrpcBoom.aborted([message], [metadata])`](#grpcboomabortedmessage-metadata)
-    - [`GrpcBoom.outOfRange([message], [metadata])`](#grpcboomoutofrangemessage-metadata)
-    - [`GrpcBoom.unimplemented([message], [metadata])`](#grpcboomunimplementedmessage-metadata)
-    - [`GrpcBoom.internal([message], [metadata])`](#grpcboominternalmessage-metadata)
-    - [`GrpcBoom.unavailable([message], [metadata])`](#grpcboomunavailablemessage-metadata)
-    - [`GrpcBoom.dataLoss([message], [metadata])`](#grpcboomdatalossmessage-metadata)
-    - [`GrpcBoom.unauthenticated([message], [metadata])`](#grpcboomunauthenticatedmessage-metadata)
+    - [`GrpcBoom.cancelled([message], [metadata], [details])`](#grpcboomcancelledmessage-metadata-details)
+    - [`GrpcBoom.unknown([message], [metadata], [details])`](#grpcboomunknownmessage-metadata-details)
+    - [`GrpcBoom.invalidArgument([message], [metadata], [details])`](#grpcboominvalidargumentmessage-metadata-details)
+    - [`GrpcBoom.deadlineExceeded([message], [metadata], [details])`](#grpcboomdeadlineexceededmessage-metadata-details)
+    - [`GrpcBoom.notFound([message], [metadata], [details])`](#grpcboomnotfoundmessage-metadata-details)
+    - [`GrpcBoom.alreadyExists([message], [metadata], [details])`](#grpcboomalreadyexistsmessage-metadata-details)
+    - [`GrpcBoom.permissionDenied([message], [metadata], [details])`](#grpcboompermissiondeniedmessage-metadata-details)
+    - [`GrpcBoom.resourceExhausted([message], [metadata], [details])`](#grpcboomresourceexhaustedmessage-metadata-details)
+    - [`GrpcBoom.failedPrecondition([message], [metadata], [details])`](#grpcboomfailedpreconditionmessage-metadata-details)
+    - [`GrpcBoom.aborted([message], [metadata], [details])`](#grpcboomabortedmessage-metadata-details)
+    - [`GrpcBoom.outOfRange([message], [metadata], [details])`](#grpcboomoutofrangemessage-metadata-details)
+    - [`GrpcBoom.unimplemented([message], [metadata], [details])`](#grpcboomunimplementedmessage-metadata-details)
+    - [`GrpcBoom.internal([message], [metadata], [details])`](#grpcboominternalmessage-metadata-details)
+    - [`GrpcBoom.unavailable([message], [metadata], [details])`](#grpcboomunavailablemessage-metadata-details)
+    - [`GrpcBoom.dataLoss([message], [metadata], [details])`](#grpcboomdatalossmessage-metadata-details)
+    - [`GrpcBoom.unauthenticated([message], [metadata], [details])`](#grpcboomunauthenticatedmessage-metadata-details)
 
 <!-- tocstop -->
 
@@ -72,10 +72,11 @@ npm install @grpc/grpc-js --save
 error response object which includes the following properties:
 
 - `isBoom` - if `true`, indicates this is a `GrpcBoom` object instance.
-- `metadata` - an optional gRPC `Metadata` object.
+- `metadata` - an optional gRPC `Metadata` object..
 - `code` - the gRPC status code.
 - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 - `message` - the error message.
+- `details` - optional error details.
 
 ## Usage
 
@@ -230,7 +231,8 @@ Creates a new `GrpcBoom` object using the provided `message` and decorates the e
 - `message` - the error message.
 - `options` - and optional object where:
   - `code` - the gRPC status code. Defaults to `2` if no status code is set.
-  - `metadata` - an optional gRPC `Metadata` object.
+  - `details` - optional error details.
+  - `metadata` - an optional gRPC `Metadata` object..
   - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 
 ### `boomify(error, [options])`
@@ -240,8 +242,9 @@ Decorates an error with `GrpcBoom` properties where:
 - `error` - the `Error / GrpcBoom` object to decorate.
 - `options` - optional object with the following settings:
   - `code` - the gRPC status code. Defaults to `2` if no status code is already set.
+  - `details` - optional error details.
   - `message` - the error message string
-  - `metadata` - an optional gRPC `Metadata` object.
+  - `metadata` - an optional gRPC `Metadata` object..
   - `error` - the gRPC status message (e.g. 'INVALID_ARGUMENTS', 'INTERNAL').
 
 ```typescript
@@ -263,12 +266,13 @@ Generates the following response payload:
 
 Below is a list of convenience methods that can be used to easily generate `gRPC` errors:
 
-### `GrpcBoom.cancelled([message], [metadata])`
+### `GrpcBoom.cancelled([message], [metadata], [details])`
 
 Returns a `1` Cancelled error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object.
+- `metadata` - optional gRPC `Metadata` object..
+- `details` - optional details.
 
 ```js
 GrpcBoom.cancelled('Operation was cancelled');
@@ -284,12 +288,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.unknown([message], [metadata])`
+### `GrpcBoom.unknown([message], [metadata], [details])`
 
 Returns a `2` Unknown error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.unknown('Unknown error');
@@ -305,12 +310,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.invalidArgument([message], [metadata])`
+### `GrpcBoom.invalidArgument([message], [metadata], [details])`
 
 Returns a `3` Invalid Argument error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.invalidArgument('Invalid query');
@@ -326,12 +332,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.deadlineExceeded([message], [metadata])`
+### `GrpcBoom.deadlineExceeded([message], [metadata], [details])`
 
 Returns a `4` Deadline Exceeded error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.deadlineExceeded('Deadline expired before operation could complete');
@@ -347,12 +354,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.notFound([message], [metadata])`
+### `GrpcBoom.notFound([message], [metadata], [details])`
 
 Returns a `5` Not Found error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.notFound('Requested entity was not found');
@@ -368,12 +376,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.alreadyExists([message], [metadata])`
+### `GrpcBoom.alreadyExists([message], [metadata], [details])`
 
 Returns a `6` Already Exists error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.alreadyExists('Requested entity already exists');
@@ -389,12 +398,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.permissionDenied([message], [metadata])`
+### `GrpcBoom.permissionDenied([message], [metadata], [details])`
 
 Returns a `7` Permission Denied error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.permissionDenied('The caller does not have permission to execute the specified operation');
@@ -410,12 +420,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.resourceExhausted([message], [metadata])`
+### `GrpcBoom.resourceExhausted([message], [metadata], [details])`
 
 Returns a `8` Resource Exhausted error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.resourceExhausted('Resource has been exhausted');
@@ -431,12 +442,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.failedPrecondition([message], [metadata])`
+### `GrpcBoom.failedPrecondition([message], [metadata], [details])`
 
 Returns a `9` Failed Precondition error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.failedPrecondition(
@@ -454,12 +466,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.aborted([message], [metadata])`
+### `GrpcBoom.aborted([message], [metadata], [details])`
 
 Returns a `10` Aborted error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.aborted('The operation was aborted');
@@ -475,12 +488,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.outOfRange([message], [metadata])`
+### `GrpcBoom.outOfRange([message], [metadata], [details])`
 
 Returns a `11` Out of Range error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.outOfRange('Operation was attempted past the valid range');
@@ -496,12 +510,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.unimplemented([message], [metadata])`
+### `GrpcBoom.unimplemented([message], [metadata], [details])`
 
 Returns a `12` Unimplemented error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.unimplemented('Operation is not implemented or not supported/enabled');
@@ -517,12 +532,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.internal([message], [metadata])`
+### `GrpcBoom.internal([message], [metadata], [details])`
 
 Returns a `13` Internal error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.internal('Internal errors');
@@ -538,12 +554,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.unavailable([message], [metadata])`
+### `GrpcBoom.unavailable([message], [metadata], [details])`
 
 Returns a `14` Unavailable error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.unavailable('The service is currently unavailable');
@@ -559,12 +576,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.dataLoss([message], [metadata])`
+### `GrpcBoom.dataLoss([message], [metadata], [details])`
 
 Returns a `15` Data Loss error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.dataLoss('Unrecoverable data loss or corruption');
@@ -580,12 +598,13 @@ Generates the following response payload:
 }
 ```
 
-### `GrpcBoom.unauthenticated([message], [metadata])`
+### `GrpcBoom.unauthenticated([message], [metadata], [details])`
 
 Returns a `16` Unauthenticated error where:
 
 - `message` - optional message.
-- `metadata` - optional gRPC `Metadata` object
+- `metadata` - optional gRPC `Metadata` object.
+- `details` - optional details.
 
 ```js
 GrpcBoom.unauthenticated(
