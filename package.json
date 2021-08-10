@@ -1,6 +1,6 @@
 {
 	"name": "grpc-boom",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "A gRPC implementation of the awesome Boom library to help create gRPC-friendly error objects",
 	"main": "src/index.js",
 	"scripts": {
@@ -31,14 +31,14 @@
 	"devDependencies": {
 		"@types/jest": "^26.0.24",
 		"@types/node": "^16.4.13",
-		"@grpc/grpc-js": "^1.3.6",
+		"@grpc/grpc-js": "^1.3.7",
 		"jest": "^27.0.6",
 		"jest-coverage-badges": "^1.1.2",
 		"npm-check-updates": "^11.8.3",
 		"prettier": "^2.3.2",
 		"protobufjs": "^6.11.2",
 		"ts-jest": "^27.0.4",
-		"ts-node": "^10.1.0",
+		"ts-node": "^10.2.0",
 		"tslint": "^6.1.3",
 		"typescript": "^4.3.5"
 	}

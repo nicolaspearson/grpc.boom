@@ -2,9 +2,7 @@ import { Metadata } from '@grpc/grpc-js';
 
 import GrpcBoom, { Status } from '../src/index';
 
-// tslint:disable no-console
-
-describe('Test Public Functions', () => {
+describe('Grpc Boom', () => {
 	test('should be able to create a boom object from the constructor', () => {
 		const metadata: Metadata = new Metadata();
 		metadata.set('constructed', 'true');
@@ -22,7 +20,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using boomify', () => {
@@ -45,7 +42,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using a custom error', () => {
@@ -69,7 +65,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the ok convenience method', () => {
@@ -89,7 +84,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the cancelled convenience method', () => {
@@ -109,7 +103,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the unknown convenience method', () => {
@@ -129,7 +122,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the invalid argument convenience method', () => {
@@ -149,7 +141,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the deadline exceeded convenience method', () => {
@@ -169,7 +160,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the not found convenience method', () => {
@@ -189,7 +179,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the already exists convenience method', () => {
@@ -209,7 +198,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the permission denied convenience method', () => {
@@ -229,7 +217,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the resource exhausted convenience method', () => {
@@ -249,7 +236,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the failed precondition convenience method', () => {
@@ -269,7 +255,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the aborted convenience method', () => {
@@ -289,7 +274,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the out of range convenience method', () => {
@@ -309,7 +293,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the unimplemented convenience method', () => {
@@ -329,7 +312,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the internal convenience method', () => {
@@ -349,7 +331,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the unavailable convenience method', () => {
@@ -369,7 +350,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the dataLoss convenience method', () => {
@@ -389,7 +369,6 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
-
 	});
 
 	test('should be able to create a boom object using the unauthenticated convenience method', () => {
@@ -409,6 +388,22 @@ describe('Test Public Functions', () => {
 			expect(metadataValue.length).toBeGreaterThan(0);
 			expect(metadataValue[0]).toEqual('true');
 		}
+	});
 
+	test('should convert a bad request http exception correctly', () => {
+		const httpException = {
+			code: 400,
+			message: 'Invalid input provided.',
+			details: 'Password must be more than 6 characters.'
+		};
+		const grpcBoom = GrpcBoom.fromHttpException(httpException);
+
+		expect(grpcBoom.isBoom).toEqual(true);
+		expect(grpcBoom.message).toEqual(httpException.message);
+		expect(grpcBoom.details).toEqual(httpException.details);
+		expect(grpcBoom.code).toEqual(GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpException.code]);
+		expect(grpcBoom.error).toEqual('INVALID_ARGUMENT');
+		expect(grpcBoom.name).toEqual('Error');
+		expect(grpcBoom.metadata).not.toBeDefined();
 	});
 });

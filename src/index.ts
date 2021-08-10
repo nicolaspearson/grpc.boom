@@ -143,11 +143,13 @@ export interface Options {
 	/** additional error information. */
 	metadata?: Metadata;
 	/** constructor reference. */
-	ctor?: (message: string, metadata?: Metadata) => any;
+	ctor?: (message: string, metadata?: Metadata, details?: string) => any;
 	/** error - the gRPC status message. */
 	error?: string;
 	/** message - the error message. */
 	message?: string | Error;
+	/** details - the error details. */
+	details?: string;
 }
 
 export default class GrpcBoom implements ServiceError {
@@ -190,6 +192,10 @@ export default class GrpcBoom implements ServiceError {
 		this.error = error;
 		this.message = message;
 
+		if (options && options.details !== undefined) {
+			this.details = options.details;
+		}
+
 		if (options && options.metadata !== undefined) {
 			this.metadata = options.metadata;
 		}
@@ -224,6 +230,11 @@ export default class GrpcBoom implements ServiceError {
 
 		const newOptions: Options = { code, error };
 
+		newOptions.details = errorInstance.details ?? undefined;
+		if (options && options.details !== undefined) {
+			newOptions.details = errorInstance.details ?? options.details;
+		}
+
 		if (options && options.metadata) {
 			newOptions.metadata = options.metadata;
 		}
@@ -234,16 +245,16 @@ export default class GrpcBoom implements ServiceError {
 	/**
 	 * Not an error; returned on success
 	 */
-	public static ok(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.OK, metadata, this.ok);
+	public static ok(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.OK, metadata, this.ok, details);
 	}
 
 	/**
 	 * The operation was cancelled (typically by the caller).
 	 */
 
-	public static cancelled(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.CANCELLED, metadata, this.cancelled);
+	public static cancelled(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.CANCELLED, metadata, this.cancelled, details);
 	}
 
 	/**
@@ -254,8 +265,8 @@ export default class GrpcBoom implements ServiceError {
 	 * may be converted to this error.
 	 */
 
-	public static unknown(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.UNKNOWN, metadata, this.unknown);
+	public static unknown(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.UNKNOWN, metadata, this.unknown, details);
 	}
 
 	/**
@@ -265,8 +276,8 @@ export default class GrpcBoom implements ServiceError {
 	 * (e.g., a malformed file name).
 	 */
 
-	public static invalidArgument(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.INVALID_ARGUMENT, metadata, this.invalidArgument);
+	public static invalidArgument(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.INVALID_ARGUMENT, metadata, this.invalidArgument, details);
 	}
 
 	/**
@@ -276,23 +287,23 @@ export default class GrpcBoom implements ServiceError {
 	 * successful response from a server could have been delayed long
 	 * enough for the deadline to expire.
 	 */
-	public static deadlineExceeded(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.DEADLINE_EXCEEDED, metadata, this.deadlineExceeded);
+	public static deadlineExceeded(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.DEADLINE_EXCEEDED, metadata, this.deadlineExceeded, details);
 	}
 
 	/**
 	 * Some requested entity (e.g., file or directory) was not found.
 	 */
-	public static notFound(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.NOT_FOUND, metadata, this.notFound);
+	public static notFound(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.NOT_FOUND, metadata, this.notFound, details);
 	}
 
 	/**
 	 * Some entity that we attempted to create (e.g., file or directory)
 	 * already exists.
 	 */
-	public static alreadyExists(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.ALREADY_EXISTS, metadata, this.alreadyExists);
+	public static alreadyExists(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.ALREADY_EXISTS, metadata, this.alreadyExists, details);
 	}
 
 	/**
@@ -303,16 +314,16 @@ export default class GrpcBoom implements ServiceError {
 	 * used if the caller can not be identified (use UNAUTHENTICATED
 	 * instead for those errors).
 	 */
-	public static permissionDenied(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.PERMISSION_DENIED, metadata, this.permissionDenied);
+	public static permissionDenied(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.PERMISSION_DENIED, metadata, this.permissionDenied, details);
 	}
 
 	/**
 	 * Some resource has been exhausted, perhaps a per-user quota, or
 	 * perhaps the entire file system is out of space.
 	 */
-	public static resourceExhausted(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.RESOURCE_EXHAUSTED, metadata, this.resourceExhausted);
+	public static resourceExhausted(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.RESOURCE_EXHAUSTED, metadata, this.resourceExhausted, details);
 	}
 
 	/**
@@ -337,8 +348,8 @@ export default class GrpcBoom implements ServiceError {
 	 *    server does not match the condition. E.g., conflicting
 	 *    read-modify-write on the same resource.
 	 */
-	public static failedPrecondition(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.FAILED_PRECONDITION, metadata, this.failedPrecondition);
+	public static failedPrecondition(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.FAILED_PRECONDITION, metadata, this.failedPrecondition, details);
 	}
 
 	/**
@@ -348,8 +359,8 @@ export default class GrpcBoom implements ServiceError {
 	 * See litmus test above for deciding between FAILED_PRECONDITION,
 	 * ABORTED, and UNAVAILABLE.
 	 */
-	public static aborted(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.ABORTED, metadata, this.aborted);
+	public static aborted(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.ABORTED, metadata, this.aborted, details);
 	}
 
 	/**
@@ -369,15 +380,15 @@ export default class GrpcBoom implements ServiceError {
 	 * a space can easily look for an OUT_OF_RANGE error to detect when
 	 * they are done.
 	 */
-	public static outOfRange(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.OUT_OF_RANGE, metadata, this.outOfRange);
+	public static outOfRange(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.OUT_OF_RANGE, metadata, this.outOfRange, details);
 	}
 
 	/**
 	 * Operation is not implemented or not supported/enabled in this service.
 	 */
-	public static unimplemented(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.UNIMPLEMENTED, metadata, this.unimplemented);
+	public static unimplemented(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.UNIMPLEMENTED, metadata, this.unimplemented, details);
 	}
 
 	/**
@@ -385,8 +396,8 @@ export default class GrpcBoom implements ServiceError {
 	 * system has been broken. If you see one of these errors,
 	 * something is very broken.
 	 */
-	public static internal(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.INTERNAL, metadata, this.internal);
+	public static internal(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.INTERNAL, metadata, this.internal, details);
 	}
 
 	/**
@@ -397,46 +408,88 @@ export default class GrpcBoom implements ServiceError {
 	 * See litmus test above for deciding between FAILED_PRECONDITION,
 	 * ABORTED, and UNAVAILABLE.
 	 */
-	public static unavailable(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.UNAVAILABLE, metadata, this.unavailable);
+	public static unavailable(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.UNAVAILABLE, metadata, this.unavailable, details);
 	}
 
 	/**
 	 * Unrecoverable data loss or corruption.
 	 */
-	public static dataLoss(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.DATA_LOSS, metadata, this.dataLoss);
+	public static dataLoss(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.DATA_LOSS, metadata, this.dataLoss, details);
 	}
 
 	/**
 	 * The request does not have valid authentication credentials for the
 	 * operation.
 	 */
-	public static unauthenticated(message: string, metadata?: Metadata): GrpcBoom {
-		return this.create(message, Status.UNAUTHENTICATED, metadata, this.unauthenticated);
+	public static unauthenticated(message: string, metadata?: Metadata, details?: string): GrpcBoom {
+		return this.create(message, Status.UNAUTHENTICATED, metadata, this.unauthenticated, details);
+	}
+
+	public static httpStatusCodeToGrpcErrorCodeMapper: { [httpStatusCode: number]: number } = {
+		400: Status.INVALID_ARGUMENT.valueOf(),
+		401: Status.UNAUTHENTICATED.valueOf(),
+		403: Status.PERMISSION_DENIED.valueOf(),
+		404: Status.NOT_FOUND.valueOf(),
+		408: Status.DEADLINE_EXCEEDED.valueOf(),
+		409: Status.ALREADY_EXISTS.valueOf(),
+		422: Status.ABORTED.valueOf(),
+		500: Status.INTERNAL.valueOf(),
+		501: Status.UNIMPLEMENTED.valueOf(),
+		503: Status.UNAVAILABLE.valueOf(),
+	};
+
+	/**
+	 * Attempts to convert an http exception to a grpc boom error.
+	 * Fails over to an unknown grpc error if the error code cannot be inferred.
+	 */
+	public static fromHttpException(httpException: {
+		code?: number;
+		details?: string;
+		message?: string;
+		output?: { payload?: { message?: string; statusCode?: number }, statusCode?: number }
+		status?: number;
+		statusCode?: number
+	}): GrpcBoom {
+		const { code, details, message, output, status, statusCode } = httpException;
+		const httpStatusCode: number | undefined = code ?? status ?? statusCode ?? output?.statusCode ?? output?.payload?.statusCode;
+		const grpcErrorCode = httpStatusCode ? GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpStatusCode] : GrpcBoom.fallbackStatus;
+		return GrpcBoom.boomify({
+			code: grpcErrorCode,
+			details,
+			message: message ?? output?.payload?.message,
+		});
 	}
 
 	private static create(
 		message: string,
 		code: number,
 		metadata?: Metadata,
-		ctor?: (message: string, metadata?: Metadata) => any
+		ctor?: (message: string, metadata?: Metadata, details?: string) => any,
+		details?: string,
 	): GrpcBoom {
 		const grpcBoom: GrpcBoom = new GrpcBoom(message, {
 			code,
+			details,
 			metadata,
 			ctor,
 		});
-		return grpcBoom.initialize(grpcBoom, code, message, metadata);
+		return grpcBoom.initialize(grpcBoom, code, message, metadata, details);
 	}
 
 	private initialize(
 		errorInstance: GrpcBoom,
 		code: number,
 		message?: string | Error,
-		metadata?: Metadata
+		metadata?: Metadata,
+		details?: string,
 	) {
 		this.isBoom = true;
+
+		if (details) {
+			this.details = details;
+		}
 
 		if (metadata) {
 			this.metadata = metadata;
@@ -453,7 +506,7 @@ export default class GrpcBoom implements ServiceError {
 		return this;
 	}
 
-	private reformat(debug?: boolean) {
+	private reformat() {
 		if (this.code === undefined) {
 			this.code = GrpcBoom.fallbackStatus;
 		}

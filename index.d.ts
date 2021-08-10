@@ -143,11 +143,13 @@ export interface Options {
 	/** additional error information. */
 	metadata?: Metadata;
 	/** constructor reference. */
-	ctor?: (message: string, metadata?: Metadata) => any;
+	ctor?: (message: string, metadata?: Metadata, details?: string) => any;
 	/** error - the gRPC status message. */
 	error?: string;
 	/** message - the error message. */
 	message?: string | Error;
+	/** details - the error details. */
+	details?: string;
 }
 
 export default class GrpcBoom implements ServiceError {
@@ -176,18 +178,34 @@ export default class GrpcBoom implements ServiceError {
 	public static boomify(error: any, options?: Options): GrpcBoom;
 
 	/**
+	 * Attempts to convert an http exception to a grpc boom error.
+	 * Fails over to an unknown grpc error if the error code cannot be inferred.
+	 * @param httpException the http exception.
+	 */
+	public static fromHttpException(httpException: {
+		code?: number;
+		details?: string;
+		message?: string;
+		output?: { payload?: { message?: string; statusCode?: number }, statusCode?: number }
+		status?: number;
+		statusCode?: number
+	}): GrpcBoom;
+
+	/**
 	 * Not an error; returned on success
 	 * @param message the message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static ok(message: string, metadata?: Metadata): GrpcBoom;
+	public static ok(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * The operation was cancelled (typically by the caller).
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static cancelled(message: string, metadata?: Metadata): GrpcBoom;
+	public static cancelled(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Unknown error. An example of where this error may be returned is
@@ -197,8 +215,9 @@ export default class GrpcBoom implements ServiceError {
 	 * may be converted to this error.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static unknown(message: string, metadata?: Metadata): GrpcBoom;
+	public static unknown(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Client specified an invalid argument. Note that this differs
@@ -207,8 +226,9 @@ export default class GrpcBoom implements ServiceError {
 	 * (e.g., a malformed file name).
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static invalidArgument(message: string, metadata?: Metadata): GrpcBoom;
+	public static invalidArgument(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Deadline expired before operation could complete. For operations
@@ -218,23 +238,26 @@ export default class GrpcBoom implements ServiceError {
 	 * enough for the deadline to expire.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static deadlineExceeded(message: string, metadata?: Metadata): GrpcBoom;
+	public static deadlineExceeded(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Some requested entity (e.g., file or directory) was not found.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static notFound(message: string, metadata?: Metadata): GrpcBoom;
+	public static notFound(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Some entity that we attempted to create (e.g., file or directory)
 	 * already exists.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static alreadyExists(message: string, metadata?: Metadata): GrpcBoom;
+	public static alreadyExists(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * The caller does not have permission to execute the specified
@@ -245,16 +268,18 @@ export default class GrpcBoom implements ServiceError {
 	 * instead for those errors).
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static permissionDenied(message: string, metadata?: Metadata): GrpcBoom;
+	public static permissionDenied(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Some resource has been exhausted, perhaps a per-user quota, or
 	 * perhaps the entire file system is out of space.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static resourceExhausted(message: string, metadata?: Metadata): GrpcBoom;
+	public static resourceExhausted(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Operation was rejected because the system is not in a state
@@ -279,8 +304,9 @@ export default class GrpcBoom implements ServiceError {
 	 *    read-modify-write on the same resource.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static failedPrecondition(message: string, metadata?: Metadata): GrpcBoom;
+	public static failedPrecondition(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * The operation was aborted, typically due to a concurrency issue
@@ -290,8 +316,9 @@ export default class GrpcBoom implements ServiceError {
 	 * ABORTED, and UNAVAILABLE.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static aborted(message: string, metadata?: Metadata): GrpcBoom;
+	public static aborted(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Operation was attempted past the valid range. E.g., seeking or
@@ -311,15 +338,17 @@ export default class GrpcBoom implements ServiceError {
 	 * they are done.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static outOfRange(message: string, metadata?: Metadata): GrpcBoom;
+	public static outOfRange(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Operation is not implemented or not supported/enabled in this service.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static unimplemented(message: string, metadata?: Metadata): GrpcBoom;
+	public static unimplemented(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Internal errors. Means some invariants expected by underlying
@@ -327,8 +356,9 @@ export default class GrpcBoom implements ServiceError {
 	 * something is very broken.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static internal(message: string, metadata?: Metadata): GrpcBoom;
+	public static internal(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * The service is currently unavailable. This is a most likely a
@@ -339,21 +369,24 @@ export default class GrpcBoom implements ServiceError {
 	 * ABORTED, and UNAVAILABLE.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static unavailable(message: string, metadata?: Metadata): GrpcBoom;
+	public static unavailable(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * Unrecoverable data loss or corruption.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static dataLoss(message: string, metadata?: Metadata): GrpcBoom;
+	public static dataLoss(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 
 	/**
 	 * The request does not have valid authentication credentials for the
 	 * operation.
 	 * @param message the error message.
 	 * @param metadata optional grpc metadata.
+	 * @param details optional grpc details.
 	 */
-	public static unauthenticated(message: string, metadata?: Metadata): GrpcBoom;
+	public static unauthenticated(message: string, metadata?: Metadata, details?: string): GrpcBoom;
 }
