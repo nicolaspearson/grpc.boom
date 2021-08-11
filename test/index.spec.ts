@@ -430,4 +430,39 @@ describe('Grpc Boom', () => {
 		expect(grpcBoom.name).toEqual('Error');
 		expect(grpcBoom.metadata).not.toBeDefined();
 	});
+
+	test('should convert a boom bad request http exception with data details correctly', () => {
+		const httpException = {
+			data: {
+				userUuid: {
+					isNotEmpty: 'userUuid should not be empty',
+					isUuid: 'userUuid must be a UUID'
+				}
+			},
+			isBoom: true,
+			isServer: false,
+			output: {
+				statusCode: 400,
+				payload: {
+					statusCode: 400,
+					error: 'Bad Request',
+					message: 'Invalid input provided.'
+				},
+				headers: {}
+			},
+			code: 'invalidInput'
+		};
+		const grpcBoom = GrpcBoom.fromHttpException(httpException as any);
+
+		expect(grpcBoom.isBoom).toEqual(true);
+		expect(grpcBoom.message).toEqual(httpException.output.payload.message);
+		expect(grpcBoom.details).toEqual(JSON.stringify(httpException.data, null, 2));
+		expect(grpcBoom.code).toEqual(GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpException.output.statusCode]);
+		expect(grpcBoom.code).toEqual(3);
+		expect(grpcBoom.error).toEqual('INVALID_ARGUMENT');
+		expect(grpcBoom.name).toEqual('Error');
+		expect(grpcBoom.metadata).not.toBeDefined();
+	});
+
+
 });

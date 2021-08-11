@@ -458,7 +458,7 @@ export default class GrpcBoom implements ServiceError {
 		metadata?: Metadata
 	): GrpcBoom {
 		const { code, data, details, message, output, status, statusCode } = httpException;
-		const httpStatusCode: number | undefined = code ?? status ?? statusCode ?? output?.statusCode ?? output?.payload?.statusCode;
+		const httpStatusCode: number | undefined = typeof code === 'number' ? code : status ?? statusCode ?? output?.statusCode ?? output?.payload?.statusCode;
 		const grpcErrorCode = httpStatusCode ? GrpcBoom.httpStatusCodeToGrpcErrorCodeMapper[httpStatusCode] : GrpcBoom.fallbackStatus;
 		const dataDetails: string | undefined = data ? JSON.stringify(data, null, 2) : undefined;
 		return GrpcBoom.boomify({
