@@ -13,6 +13,10 @@ A `gRPC` implementation of the awesome [Boom](https://github.com/hapijs/boom) li
 
 This library has **zero** external dependencies, but it is assumed that you are using the `@grpc/grpc-js` library.
 
+## Notice (Deprecated)
+
+The source code for this library has been moved to: [Kalos](https://github.com/nicolaspearson/kalos/tree/main/packages/grpc-boom).
+
 ## Installation
 
 ```
